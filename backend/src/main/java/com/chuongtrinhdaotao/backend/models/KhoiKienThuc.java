@@ -1,24 +1,26 @@
 package com.chuongtrinhdaotao.backend.models;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "khoi_kien_thuc")
-@Getter
 @Setter
-@AllArgsConstructor
+@Getter
 @NoArgsConstructor
-@ToString
-@Builder
+@AllArgsConstructor
 public class KhoiKienThuc {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
-    @Column(nullable = false)
-    private String ten;
+    private String name;
 
-    @Column(name = "id_khung_chuong_trinh")
-    private KhungChuongTrinh khungChuongTrinh;
+    @OneToMany(mappedBy = "khoiKienThuc", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ArrayList<CTKhoiKienThuc> ctKhoiKienThucs = new ArrayList<>();
 }

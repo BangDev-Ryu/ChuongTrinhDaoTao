@@ -1,30 +1,25 @@
 package com.chuongtrinhdaotao.backend.models;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Table(name = "ct_khoi_kien_thuc")
-@Getter
+@Table(name = "khoi_kien_thuc")
 @Setter
-@AllArgsConstructor
+@Getter
 @NoArgsConstructor
-@ToString
-@Builder
+@AllArgsConstructor
 public class CTKhoiKienThuc {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
-    @Column(nullable = false)
-    private String ten;
+    private String name;
 
-    @Column(name = "tc_bat_buoc")
-    private int tcBatBuoc;
-
-    @Column(name = "tc_tu_chon")
-    private int tcTuChon;
-
-    @Column(name = "id_khoi_kien_thuc")
+    @ManyToOne
+    @JoinColumn(name = "id_khoi_kien_thuc")
     private KhoiKienThuc khoiKienThuc;
 }
