@@ -7,6 +7,7 @@ import HocPhan from './components/pages/HocPhan';
 import DeCuongChiTiet from './components/pages/DeCuongChiTiet';
 import MoNhomPhanCong from './components/pages/MoNhomPhanCong';
 import GiangVien from './components/pages/GiangVien';
+import KeHoachDayHoc from './components/pages/KeHoachDayHoc';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/" element={<ThongTinChung />} />
             <Route path="/HocPhan" element={<HocPhan />} />
             <Route path="/DeCuongChiTiet" element={<DeCuongChiTiet />} />
+            <Route path="/KeHoachDayHoc" element={<KeHoachDayHoc />} />
             <Route path="/MoNhomPhanCong" element={<MoNhomPhanCong />} />
             <Route path="/GiangVien" element={<GiangVien />} />
           </Routes>
