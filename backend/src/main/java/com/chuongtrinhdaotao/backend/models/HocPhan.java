@@ -6,9 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "hoc_phan")
 @Setter
@@ -36,10 +33,4 @@ public class HocPhan {
     private Double heSo;
     private Integer hocKyThucHien;
     private String maHocPhanTruoc;
-
-    @OneToMany(mappedBy = "hocPhan", cascade = CascadeType.ALL, orphanRemoval = true)
-    private ArrayList<KeHoachMoNhom> keHoachMoNhoms = new ArrayList<>();
-
-    @OneToMany(mappedBy = "hocPhan", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DeCuongChiTiet> deCuongChiTiets = new ArrayList<>();
 }

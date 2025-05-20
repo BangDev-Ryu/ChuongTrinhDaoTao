@@ -1,5 +1,6 @@
 package com.chuongtrinhdaotao.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,7 +31,4 @@ public class ThongTinChung {
     private String ngonNgu;
     private String website;
     private String banHanh;
-
-    @OneToMany(mappedBy = "thongTinChung", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<HocPhan> hocPhans = new ArrayList<>();
 }

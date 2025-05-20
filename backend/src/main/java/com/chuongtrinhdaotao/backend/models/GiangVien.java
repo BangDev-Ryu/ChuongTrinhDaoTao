@@ -24,10 +24,6 @@ public class GiangVien {
     private String chucDanh;
     private int namSinh;
 
-    @OneToMany(mappedBy = "giangVien", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PhanCongGiangDay> phanCongGiangDays = new ArrayList<>();
-
     @OneToOne(mappedBy = "giangVien", cascade = CascadeType.ALL, orphanRemoval = true)
     private User user;
-
 }
