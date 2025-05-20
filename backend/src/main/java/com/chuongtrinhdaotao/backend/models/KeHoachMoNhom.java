@@ -6,9 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "ke_hoach_mo_nhom")
 @Setter
@@ -27,7 +24,4 @@ public class KeHoachMoNhom {
     private String khoa;
     private Integer tongSoNhom;
     private Integer soLuongSinhVienNhom;
-
-    @OneToMany(mappedBy = "keHoachMoNhom", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PhanCongGiangDay> phanCongGiangDays = new ArrayList<>();
 }

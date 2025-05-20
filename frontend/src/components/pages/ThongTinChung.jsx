@@ -320,74 +320,73 @@ const ThongTinChung = () => {
           <Table bordered>
             <thead>
               <tr>
-                <th colSpan="2">Các khối kiến thức</th>
-                <th colSpan="2">Số tín chỉ</th>
+                <th colSpan="2" rowSpan="2" className='text-center align-middle'>Các khối kiến thức</th>
+                <th colSpan="2" className='text-center'>Số tín chỉ</th>
               </tr>
               <tr>
-                <th colSpan={2}></th>
                 <th>Bắt buộc</th>
                 <th>Tự chọn</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>I</td>
-                <td >Khối kiến thức giáo dục đại cương</td>
-                <td>34</td>
-                <td>0</td>
+                <td className='fw-bold'>I</td>
+                <td className='fw-bold'>Khối kiến thức giáo dục đại cương</td>
+                <td className='fw-bold'>34</td>
+                <td className='fw-bold'>0</td>
               </tr>
               <tr>
                 <td></td>
-                <td >Kiến thức Giáo dục thể chất và Giáo dục quốc phòng và an ninh</td>
+                <td>Kiến thức Giáo dục thể chất và Giáo dục quốc phòng và an ninh</td>
                 <td>12</td>
                 <td>2</td>
               </tr>
               <tr>
                 <td></td>
-                <td >Kiến thức Ngoại ngữ</td>
+                <td>Kiến thức Ngoại ngữ</td>
                 <td>9</td>
                 <td>0</td>
               </tr>
               <tr>
                 <td></td>
-                <td >Kiến thức Lý luận chính trị</td>
+                <td>Kiến thức Lý luận chính trị</td>
                 <td>11</td>
                 <td>0</td>
               </tr>
               <tr>
                 <td></td>
-                <td >Kiến thức giáo dục đại cương khác</td>
+                <td>Kiến thức giáo dục đại cương khác</td>
                 <td>14</td>
                 <td>0</td>
               </tr>
               <tr>
-                <td>II</td>
-                <td >Khối kiến thức giáo dục chuyên nghiệp</td>
-                <td>90</td>
-                <td>31</td>
+                <td className='fw-bold'>II</td>
+                <td className='fw-bold'>Khối kiến thức giáo dục chuyên nghiệp</td>
+                <td className='fw-bold'>90</td>
+                <td className='fw-bold'>31</td>
               </tr>
               <tr>
                 <td></td>
-                <td >Kiến thức cơ sở của ngành</td>
+                <td>Kiến thức cơ sở của ngành</td>
                 <td>37</td>
                 <td>0</td>
               </tr>
               <tr>
                 <td></td>
-                <td >Kiến thức ngành</td>
+                <td>Kiến thức ngành</td>
                 <td>37</td>
                 <td>16</td>
               </tr>
               <tr>
                 <td></td>
-                <td >Kiến thức chuyên ngành (nếu có)</td>
+                <td>Kiến thức chuyên ngành (nếu có)</td>
                 <td>16</td>
                 <td>15</td>
               </tr>
               <tr>
                 <td colSpan="2" className="text-end fw-bold">Tổng</td>
-                <td>124</td>
-                <td>31</td>
+                <td className='fw-bold'>124</td>
+                <td className='fw-bold'>31</td>
               </tr>
             </tbody>
             <tfoot>

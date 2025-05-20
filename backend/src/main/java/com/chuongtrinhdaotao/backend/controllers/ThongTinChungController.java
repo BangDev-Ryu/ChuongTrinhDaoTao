@@ -3,8 +3,6 @@ package com.chuongtrinhdaotao.backend.controllers;
 import com.chuongtrinhdaotao.backend.models.ThongTinChung;
 import com.chuongtrinhdaotao.backend.services.ThongTinChungService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,13 +26,8 @@ public class ThongTinChungController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody ThongTinChung thongTinChung) {
-        try {
-            ThongTinChung created = thongTinChungService.create(thongTinChung);
-            return ResponseEntity.ok(created);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+    public ThongTinChung create(@RequestBody ThongTinChung thongTinChung) {
+        return thongTinChungService.create(thongTinChung);
     }
 
     @PutMapping("/{id}")
