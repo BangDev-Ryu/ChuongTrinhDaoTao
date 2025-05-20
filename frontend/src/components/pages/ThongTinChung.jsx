@@ -4,7 +4,8 @@ import axios from 'axios'
 
 const ThongTinChung = () => {
   const [data, setData] = useState([])
-  const [showModal, setShowModal] = useState(false)
+  const [showActionModal, setShowActionModal] = useState(false)
+  const [showDetailModal, setShowDetailModal] = useState(false)
   const [currentItem, setCurrentItem] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage] = useState(5)
@@ -68,7 +69,7 @@ const ThongTinChung = () => {
 
   // Modal handlers
   const handleCloseModal = () => {
-    setShowModal(false)
+    setShowActionModal(false)
     setCurrentItem(null)
     setFormData({
       ten: '',
@@ -84,12 +85,22 @@ const ThongTinChung = () => {
     })
   }
 
-  const handleShowModal = (item = null) => {
+  const handleShowActionModal = (item = null) => {
     if (item) {
       setCurrentItem(item)
       setFormData(item)
     }
-    setShowModal(true)
+    setShowActionModal(true)
+  }
+
+  const handleShowDetailModal = (item = null) => {
+    setCurrentItem(item)
+    setShowDetailModal(true)
+  }
+
+  const handleCloseDetailModal = () => {
+    setShowDetailModal(false)
+    setCurrentItem(null)
   }
 
   // Pagination
@@ -112,10 +123,10 @@ const ThongTinChung = () => {
   }
 
   return (
-    <div className="container mt-4">
+    <div className="container-fluid mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Quản lý thông tin chung</h2>
-        <Button variant="primary" onClick={() => handleShowModal()}>
+        <Button variant="primary" onClick={() => handleShowActionModal()}>
           Thêm mới
         </Button>
       </div>
@@ -129,7 +140,7 @@ const ThongTinChung = () => {
             <th>Loại hình đào tạo</th>
             <th>Thời gian</th>
             <th>Tín chỉ tích lũy</th>
-            <th>Actions</th>
+            <th>Hành động</th>
           </tr>
         </thead>
         <tbody>
@@ -143,13 +154,23 @@ const ThongTinChung = () => {
               <td>{item.tinChiTichLuy}</td>
               <td>
                 <Button
+                  variant="success"
+                  size="sm"
+                  className="me-2"
+                  onClick={() => handleShowDetailModal(item)}
+                >
+                  Xem chi tiết
+                </Button>
+
+                <Button
                   variant="info"
                   size="sm"
                   className="me-2"
-                  onClick={() => handleShowModal(item)}
+                  onClick={() => handleShowActionModal(item)}
                 >
                   Sửa
                 </Button>
+
                 <Button
                   variant="danger"
                   size="sm"
@@ -165,7 +186,7 @@ const ThongTinChung = () => {
 
       <Pagination>{paginationItems}</Pagination>
 
-      <Modal show={showModal} onHide={handleCloseModal}>
+      <Modal show={showActionModal} onHide={handleCloseModal} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>
             {currentItem ? 'Chỉnh sửa thông tin' : 'Thêm thông tin mới'}
@@ -173,105 +194,111 @@ const ThongTinChung = () => {
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
-              <Form.Label>Tên</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.ten}
-                onChange={(e) => setFormData({...formData, ten: e.target.value})}
-                required
-              />
-            </Form.Group>
+            <div className="row">
+              <div className="col-md-6">
+                <Form.Group className="mb-3">
+                  <Form.Label>Tên</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={formData.ten}
+                    onChange={(e) => setFormData({...formData, ten: e.target.value})}
+                    required
+                  />
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Bậc</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.bac}
-                onChange={(e) => setFormData({...formData, bac: e.target.value})}
-                required
-              />
-            </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Bậc</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={formData.bac}
+                    onChange={(e) => setFormData({...formData, bac: e.target.value})}
+                    required
+                  />
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Loại bằng</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.loaiBang}
-                onChange={(e) => setFormData({...formData, loaiBang: e.target.value})}
-                required
-              />
-            </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Loại bằng</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={formData.loaiBang}
+                    onChange={(e) => setFormData({...formData, loaiBang: e.target.value})}
+                    required
+                  />
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Loại hình đào tạo</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.loaiHinhDaoTao}
-                onChange={(e) => setFormData({...formData, loaiHinhDaoTao: e.target.value})}
-                required
-              />
-            </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Loại hình đào tạo</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={formData.loaiHinhDaoTao}
+                    onChange={(e) => setFormData({...formData, loaiHinhDaoTao: e.target.value})}
+                    required
+                  />
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Thời gian</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.thoiGian}
-                onChange={(e) => setFormData({...formData, thoiGian: e.target.value})}
-                required
-              />
-            </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Thời gian</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={formData.thoiGian}
+                    onChange={(e) => setFormData({...formData, thoiGian: e.target.value})}
+                    required
+                  />
+                </Form.Group>
+              </div>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Tín chỉ tích lũy</Form.Label>
-              <Form.Control
-                type="number"
-                value={formData.tinChiTichLuy}
-                onChange={(e) => setFormData({...formData, tinChiTichLuy: parseInt(e.target.value)})}
-                required
-              />
-            </Form.Group>
+              <div className="col-md-6">
+                <Form.Group className="mb-3">
+                  <Form.Label>Tín chỉ tích lũy</Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={formData.tinChiTichLuy}
+                    onChange={(e) => setFormData({...formData, tinChiTichLuy: parseInt(e.target.value)})}
+                    required
+                  />
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Khoa quản lý</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.khoaQuanLy}
-                onChange={(e) => setFormData({...formData, khoaQuanLy: e.target.value})}
-                required
-              />
-            </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Khoa quản lý</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={formData.khoaQuanLy}
+                    onChange={(e) => setFormData({...formData, khoaQuanLy: e.target.value})}
+                    required
+                  />
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Ngôn ngữ</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.ngonNgu}
-                onChange={(e) => setFormData({...formData, ngonNgu: e.target.value})}
-                required
-              />
-            </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Ngôn ngữ</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={formData.ngonNgu}
+                    onChange={(e) => setFormData({...formData, ngonNgu: e.target.value})}
+                    required
+                  />
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Website</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.website}
-                onChange={(e) => setFormData({...formData, website: e.target.value})}
-                required
-              />
-            </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Website</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={formData.website}
+                    onChange={(e) => setFormData({...formData, website: e.target.value})}
+                    required
+                  />
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Ngày ban hành</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.banHanh}
-                onChange={(e) => setFormData({...formData, banHanh: e.target.value})}
-                required
-              />
-            </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Ban hành</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={formData.banHanh}
+                    onChange={(e) => setFormData({...formData, banHanh: e.target.value})}
+                    required
+                  />
+                </Form.Group>
+              </div>
+            </div>
 
             <div className="d-flex justify-content-end gap-2">
               <Button variant="secondary" onClick={handleCloseModal}>
@@ -283,6 +310,100 @@ const ThongTinChung = () => {
             </div>
           </Form>
         </Modal.Body>
+      </Modal>
+
+      <Modal show={showDetailModal} onHide={handleCloseDetailModal} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Chi tiết khung</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Table bordered>
+            <thead>
+              <tr>
+                <th colSpan="2">Các khối kiến thức</th>
+                <th colSpan="2">Số tín chỉ</th>
+              </tr>
+              <tr>
+                <th colSpan={2}></th>
+                <th>Bắt buộc</th>
+                <th>Tự chọn</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>I</td>
+                <td >Khối kiến thức giáo dục đại cương</td>
+                <td>34</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td >Kiến thức Giáo dục thể chất và Giáo dục quốc phòng và an ninh</td>
+                <td>12</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td >Kiến thức Ngoại ngữ</td>
+                <td>9</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td >Kiến thức Lý luận chính trị</td>
+                <td>11</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td >Kiến thức giáo dục đại cương khác</td>
+                <td>14</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td>II</td>
+                <td >Khối kiến thức giáo dục chuyên nghiệp</td>
+                <td>90</td>
+                <td>31</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td >Kiến thức cơ sở của ngành</td>
+                <td>37</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td >Kiến thức ngành</td>
+                <td>37</td>
+                <td>16</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td >Kiến thức chuyên ngành (nếu có)</td>
+                <td>16</td>
+                <td>15</td>
+              </tr>
+              <tr>
+                <td colSpan="2" className="text-end fw-bold">Tổng</td>
+                <td>124</td>
+                <td>31</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colSpan="4">
+                  Số tín chỉ tối thiểu phải tích lũy (không tính số tín chỉ Giáo dục thể chất và Giáo dục quốc phòng và an ninh): 155
+                </td>
+              </tr>
+            </tfoot>
+          </Table>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseDetailModal}>
+            Đóng
+          </Button>
+        </Modal.Footer>
       </Modal>
     </div>
   )
