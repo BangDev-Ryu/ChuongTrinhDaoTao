@@ -15,20 +15,18 @@ const Sidebar = () => {
                 to='/'
                 className={({isActive}) => 
                   `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
-                }
-            >
+                }>
                 <i className="bi bi-house-door me-2"></i>
-                Chương trình đào tạo
+                Thông tin chung
             </NavLink>
         </Nav.Item>
 
         <Nav.Item> 
             <NavLink 
-                to='/hocphan'
+                to='/HocPhan'
                 className={({isActive}) => 
                   `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
-                }
-            >
+                }>
                 <i className="bi bi-book me-2"></i>
                 Học phần
             </NavLink>
@@ -36,11 +34,10 @@ const Sidebar = () => {
 
         <Nav.Item> 
             <NavLink 
-                to='/decuongchitiet'
+                to='/DeCuong'
                 className={({isActive}) => 
                   `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
-                }
-            >
+                }>
                 <i className="bi bi-file-text me-2"></i>
                 Đề cương chi tiết
             </NavLink>
@@ -48,37 +45,23 @@ const Sidebar = () => {
         
         <Nav.Item> 
             <NavLink 
-                to='/kehoachdayhoc'
+                to='/KeHoachMoNhom'
                 className={({isActive}) => 
                   `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
-                }
-            >
-                <i className="bi bi-calendar-check me-2"></i>
-                Kế hoạch dạy học
-            </NavLink>
-        </Nav.Item>
-
-        <Nav.Item> 
-            <NavLink 
-                to='/kehoachmonhoc'
-                className={({isActive}) => 
-                  `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
-                }
-            >
+                }>
                 <i className="bi bi-calendar-plus me-2"></i>
-                Kế hoạch mở nhóm
+                Kế hoạch mở nhóm & phân công giảng dạy
             </NavLink>
         </Nav.Item>
 
         <Nav.Item> 
             <NavLink 
-                to='/phanconggiangday'
+                to='/PhanCongGiangDay'
                 className={({isActive}) => 
                   `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
-                }
-            >
+                }>
                 <i className="bi bi-clipboard-check me-2"></i>
-                Phân công giảng dạy
+                Giảng viên
             </NavLink>
         </Nav.Item>
     </Nav>

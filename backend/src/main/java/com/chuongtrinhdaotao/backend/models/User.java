@@ -6,21 +6,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-
 @Entity
-@Table(name = "khoi_kien_thuc")
+@Table(name = "user")
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class KhoiKienThuc {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String name;
+    private String username;
+    private String password;
 
-    @OneToMany(mappedBy = "khoiKienThuc", cascade = CascadeType.ALL, orphanRemoval = true)
-    private ArrayList<CTKhoiKienThuc> ctKhoiKienThucs = new ArrayList<>();
+    @OneToOne
+    @JoinColumn(name = "id_giang_vien")
+    private GiangVien giangVien;
 }
