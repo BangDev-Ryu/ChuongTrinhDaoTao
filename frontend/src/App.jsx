@@ -5,6 +5,7 @@ import Sidebar from './components/layout/Sidebar';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ChuongTrinhDaoTao from './components/pages/ChuongTrinhDaoTao';
 import HocPhan from './components/pages/HocPhan';
+import KhoiKienThuc from './components/pages/KhoiKienThuc';
 
 function App() {
   return (
@@ -14,7 +15,8 @@ function App() {
         <main className="content">
           <Routes>
             <Route path="/" element={<ChuongTrinhDaoTao />} />
-            <Route path="/hocphan" element={<HocPhan />} />
+            <Route path="/HocPhan" element={<HocPhan />} />
+            <Route path="/KhoiKienThuc" element={<KhoiKienThuc />} />
           </Routes>
         </main>
       </div>

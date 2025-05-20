@@ -7,19 +7,22 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "khoi_kien_thuc")
+@Table(name = "de_cuong_chi_tiet")
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CTKhoiKienThuc {
+public class DeCuongChiTiet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String name;
-
     @ManyToOne
-    @JoinColumn(name = "id_khoi_kien_thuc")
-    private KhoiKienThuc khoiKienThuc;
+    @JoinColumn(name = "id_hoc_phan")
+    private HocPhan hocPhan;
+
+    private String boPhanDanhGia;
+    private String diemDanhGia;
+    private Double trongSo;
+    private String hinhTHuc;
 }
