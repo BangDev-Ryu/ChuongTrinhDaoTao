@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "ke_hoach_mo_nhom")
@@ -28,5 +29,5 @@ public class KeHoachMoNhom {
     private Integer soLuongSinhVienNhom;
 
     @OneToMany(mappedBy = "keHoachMoNhom", cascade = CascadeType.ALL, orphanRemoval = true)
-    private ArrayList<PhanCongGiangDay> phanCongGiangDays = new ArrayList<>();
+    private List<PhanCongGiangDay> phanCongGiangDays = new ArrayList<>();
 }
