@@ -34,7 +34,7 @@ const Sidebar = () => {
 
         <Nav.Item> 
             <NavLink 
-                to='/DeCuong'
+                to='/DeCuongChiTiet'
                 className={({isActive}) => 
                   `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
                 }>
@@ -45,7 +45,7 @@ const Sidebar = () => {
         
         <Nav.Item> 
             <NavLink 
-                to='/KeHoachMoNhom'
+                to='/MoNhomPhanCong'
                 className={({isActive}) => 
                   `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
                 }>
@@ -56,7 +56,7 @@ const Sidebar = () => {
 
         <Nav.Item> 
             <NavLink 
-                to='/PhanCongGiangDay'
+                to='/GiangVien'
                 className={({isActive}) => 
                   `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
                 }>
