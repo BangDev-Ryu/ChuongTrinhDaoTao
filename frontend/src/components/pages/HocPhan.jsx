@@ -24,6 +24,24 @@ const HocPhan = () => {
     soTinChi: '',
     ten: '',
   })
+  const khoiKienThucOptions = {
+  "Khối kiến thức giáo dục đại cương": [
+    "Kiến thức Lý luận chính trị",
+    "Kiến thức Ngoại ngữ",
+    "Kiến thức Giáo dục thể chất và Giáo dục quốc phòng và an ninh",
+    "Kiến thức giáo dục đại cương khác"
+  ],
+  "Khối kiến thức giáo dục chuyên nghiệp": [
+    "Kiến thức ngành",
+    "Kiến thức cơ sở của ngành",
+    "Kiến thức chuyên ngành"
+  ]
+};
+
+const loaiHocPhanOptions = ["Bắt buộc", "Không bắt buộc"];
+
+ 
+
 
   useEffect(() => {
     fetchData()
@@ -258,7 +276,6 @@ const HocPhan = () => {
                   ['Số tín chỉ', 'soTinChi', 'number'],
                   ['Hệ số', 'heSo'],
                   ['Học kỳ thực hiện', 'hocKyThucHien', 'number'],
-                  ['Khối kiến thức', 'khoiKienThuc'],
                 ].map(([label, key, type = 'text']) => (
                   <Form.Group key={key} className="mb-3">
                     <Form.Label>{label}</Form.Label>
@@ -270,12 +287,61 @@ const HocPhan = () => {
                     />
                   </Form.Group>
                 ))}
+
+                 <Form.Group className="mb-3">
+          <Form.Label>Khối kiến thức</Form.Label>
+          <Form.Select
+            value={formData.khoiKienThuc}
+            onChange={(e) => {
+              const newKhoi = e.target.value;
+              setFormData({
+                ...formData,
+                khoiKienThuc: newKhoi,
+                loaiKhoiKienThuc: '' // reset loại khối khi khối thay đổi
+              });
+            }}
+            required
+          >
+            <option value="">-- Chọn khối kiến thức --</option>
+            {Object.keys(khoiKienThucOptions).map((key) => (
+              <option key={key} value={key}>{key}</option>
+            ))}
+          </Form.Select>
+        </Form.Group>
               </div>
 
               <div className="col-md-6">
+                <Form.Group className="mb-3">
+          <Form.Label>Loại khối kiến thức</Form.Label>
+          <Form.Select
+            value={formData.loaiKhoiKienThuc}
+            onChange={(e) => setFormData({ ...formData, loaiKhoiKienThuc: e.target.value })}
+            required
+            disabled={!formData.khoiKienThuc}
+          >
+            <option value="">-- Chọn loại khối kiến thức --</option>
+            {(khoiKienThucOptions[formData.khoiKienThuc] || []).map((loai) => (
+              <option key={loai} value={loai}>{loai}</option>
+            ))}
+          </Form.Select>
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Loại học phần</Form.Label>
+          <Form.Select
+            value={formData.loaiHocPhan}
+            onChange={(e) => setFormData({ ...formData, loaiHocPhan: e.target.value })}
+            required
+          >
+            <option value="">-- Chọn loại học phần --</option>
+            {loaiHocPhanOptions.map((value) => (
+              <option key={value} value={value}>{value}</option>
+            ))}
+          </Form.Select>
+        </Form.Group>
+
+
                 {[
-                  ['Loại học phần', 'loaiHocPhan'],
-                  ['Loại khối kiến thức', 'loaiKhoiKienThuc'],
                   ['Mã học phần trước', 'maHocPhanTruoc'],
                   ['Số lý thuyết', 'soLyThuyet', 'number'],
                   ['Số thực hành', 'soThucHanh', 'number'],
