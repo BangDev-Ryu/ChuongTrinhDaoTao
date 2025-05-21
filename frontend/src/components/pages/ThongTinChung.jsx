@@ -22,6 +22,17 @@ const ThongTinChung = () => {
     banHanh: ''
   })
 
+  // Thêm state mới
+  const [tinChiTotals, setTinChiTotals] = useState({
+    gdtc: { batBuoc: 0, tuChon: 0 },
+    ngoaiNgu: { batBuoc: 0, tuChon: 0 },
+    llct: { batBuoc: 0, tuChon: 0 },
+    khac: { batBuoc: 0, tuChon: 0 },
+    coSo: { batBuoc: 0, tuChon: 0 }, 
+    nganh: { batBuoc: 0, tuChon: 0 },
+    chuyenNganh: { batBuoc: 0, tuChon: 0 }
+  });
+
   // Fetch data
   useEffect(() => {
     fetchData()
@@ -93,14 +104,87 @@ const ThongTinChung = () => {
     setShowActionModal(true)
   }
 
-  const handleShowDetailModal = (item = null) => {
-    setCurrentItem(item)
-    setShowDetailModal(true)
+  const handleShowDetailModal = async (item) => {
+    setCurrentItem(item);
+    setShowDetailModal(true);
+    
+    try {
+      // Fetch tất cả dữ liệu tín chỉ
+      const [
+        bbGDTCQP,
+        bbNgoaiNgu,
+        bbLLCT,
+        bbKhac,
+        bbCoSo,
+        bbNganh,
+        bbChuyenNganh,
+        tcGDTCQP,
+        tcNgoaiNgu,
+        tcLLCT,
+        tcKhac,
+        tcCoSo,
+        tcNganh,
+        tcChuyenNganh,
+      ] = await Promise.all([
+        sumTinChiByKhoiKienThuc(item.id, "Bắt buộc", "Kiến thức Giáo dục thể chất và Giáo dục quốc phòng và an ninh"),
+        sumTinChiByKhoiKienThuc(item.id, "Bắt buộc", "Kiến thức Ngoại ngữ"),
+        sumTinChiByKhoiKienThuc(item.id, "Bắt buộc", "Kiến thức Lý luận chính trị"),
+        sumTinChiByKhoiKienThuc(item.id, "Bắt buộc", "Kiến thức giáo dục đại cương khác"),
+        sumTinChiByKhoiKienThuc(item.id, "Bắt buộc", "Kiến thức cơ sở của ngành"),
+        sumTinChiByKhoiKienThuc(item.id, "Bắt buộc", "Kiến thức ngành"),
+        sumTinChiByKhoiKienThuc(item.id, "Bắt buộc", "Kiến thức chuyên ngành"),
+        sumTinChiByKhoiKienThuc(item.id, "Tự chọn", "Kiến thức Giáo dục thể chất và Giáo dục quốc phòng và an ninh"),
+        sumTinChiByKhoiKienThuc(item.id, "Tự chọn", "Kiến thức Ngoại ngữ"),
+        sumTinChiByKhoiKienThuc(item.id, "Tự chọn", "Kiến thức Lý luận chính trị"),
+        sumTinChiByKhoiKienThuc(item.id, "Tự chọn", "Kiến thức giáo dục đại cương khác"),
+        sumTinChiByKhoiKienThuc(item.id, "Tự chọn", "Kiến thức cơ sở của ngành"),
+        sumTinChiByKhoiKienThuc(item.id, "Tự chọn", "Kiến thức ngành"),
+        sumTinChiByKhoiKienThuc(item.id, "Tự chọn", "Kiến thức chuyên ngành"),
+      ]);
+
+      setTinChiTotals({
+        gdtc: { batBuoc: bbGDTCQP || 0, tuChon: tcGDTCQP || 0 },
+        ngoaiNgu: { batBuoc: bbNgoaiNgu || 0, tuChon: tcNgoaiNgu || 0 },
+        llct: { batBuoc: bbLLCT || 0, tuChon: tcLLCT || 0 },
+        khac: { batBuoc: bbKhac || 0, tuChon: tcKhac || 0 },
+        coSo: { batBuoc: bbCoSo || 0, tuChon: tcCoSo || 0 },
+        nganh: { batBuoc: bbNganh || 0, tuChon: tcNganh || 0 },
+        chuyenNganh: { batBuoc: bbChuyenNganh || 0, tuChon: tcChuyenNganh || 0 }
+      });
+
+    } catch (error) {
+      console.error('Error fetching credit totals:', error);
+    }
   }
 
   const handleCloseDetailModal = () => {
-    setShowDetailModal(false)
-    setCurrentItem(null)
+    setShowDetailModal(false);
+    setCurrentItem(null);
+    setTinChiTotals({
+      gdtc: { batBuoc: 0, tuChon: 0 },
+      ngoaiNgu: { batBuoc: 0, tuChon: 0 },
+      llct: { batBuoc: 0, tuChon: 0 },
+      khac: { batBuoc: 0, tuChon: 0 },
+      coSo: { batBuoc: 0, tuChon: 0 }, 
+      nganh: { batBuoc: 0, tuChon: 0 },
+      chuyenNganh: { batBuoc: 0, tuChon: 0 }
+    }); 
+  }
+
+  const sumTinChiByKhoiKienThuc = async (idThongTinChung, loaiHocPhan, khoiKienThuc) => {
+    try {
+      const response = await axios.get('http://localhost:8080/hocPhan/sumTinChiKhoiKienThuc', {
+        params: {
+          idThongTinChung,
+          loaiHocPhan,
+          khoiKienThuc
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      return 0;
+    }
   }
 
   // Pagination
@@ -332,61 +416,65 @@ const ThongTinChung = () => {
               <tr>
                 <td className='fw-bold'>I</td>
                 <td className='fw-bold'>Khối kiến thức giáo dục đại cương</td>
-                <td className='fw-bold'>34</td>
-                <td className='fw-bold'>0</td>
+                <td className='fw-bold'>X</td>
+                <td className='fw-bold'>X</td>
               </tr>
               <tr>
                 <td></td>
                 <td>Kiến thức Giáo dục thể chất và Giáo dục quốc phòng và an ninh</td>
-                <td>12</td>
-                <td>2</td>
+                <td>{tinChiTotals.gdtc.batBuoc}</td>
+                <td>{tinChiTotals.gdtc.tuChon}</td>
               </tr>
               <tr>
                 <td></td>
                 <td>Kiến thức Ngoại ngữ</td>
-                <td>9</td>
-                <td>0</td>
+                <td>{tinChiTotals.ngoaiNgu.batBuoc}</td>
+                <td>{tinChiTotals.ngoaiNgu.tuChon}</td>
               </tr>
               <tr>
                 <td></td>
                 <td>Kiến thức Lý luận chính trị</td>
-                <td>11</td>
-                <td>0</td>
+                <td>{tinChiTotals.llct.batBuoc}</td>
+                <td>{tinChiTotals.llct.tuChon}</td>
               </tr>
               <tr>
                 <td></td>
                 <td>Kiến thức giáo dục đại cương khác</td>
-                <td>14</td>
-                <td>0</td>
+                <td>{tinChiTotals.khac.batBuoc}</td>
+                <td>{tinChiTotals.khac.tuChon}</td>
               </tr>
               <tr>
                 <td className='fw-bold'>II</td>
                 <td className='fw-bold'>Khối kiến thức giáo dục chuyên nghiệp</td>
-                <td className='fw-bold'>90</td>
-                <td className='fw-bold'>31</td>
+                <td className='fw-bold'>X</td>
+                <td className='fw-bold'>X</td>
               </tr>
               <tr>
                 <td></td>
                 <td>Kiến thức cơ sở của ngành</td>
-                <td>37</td>
-                <td>0</td>
+                <td>{tinChiTotals.coSo.batBuoc}</td>
+                <td>{tinChiTotals.coSo.tuChon}</td>
               </tr>
               <tr>
                 <td></td>
                 <td>Kiến thức ngành</td>
-                <td>37</td>
-                <td>16</td>
+                <td>{tinChiTotals.nganh.batBuoc}</td>
+                <td>{tinChiTotals.nganh.tuChon}</td>
               </tr>
               <tr>
                 <td></td>
                 <td>Kiến thức chuyên ngành (nếu có)</td>
-                <td>16</td>
-                <td>15</td>
+                <td>{tinChiTotals.chuyenNganh.batBuoc}</td>
+                <td>{tinChiTotals.chuyenNganh.tuChon}</td>
               </tr>
               <tr>
                 <td colSpan="2" className="text-end fw-bold">Tổng</td>
-                <td className='fw-bold'>124</td>
-                <td className='fw-bold'>31</td>
+                <td className='fw-bold'>
+                  X
+                </td>
+                <td className='fw-bold'>
+                  X
+                </td>
               </tr>
             </tbody>
             <tfoot>
