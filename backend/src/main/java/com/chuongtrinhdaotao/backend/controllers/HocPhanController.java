@@ -39,4 +39,20 @@ public class HocPhanController {
     public void delete(@PathVariable Integer id) {
         hocPhanService.delete(id);
     }
+
+    @GetMapping("/sumTinChiKhoiKienThuc")
+    public Integer sumTinChiByKhoiKienThuc(
+            @RequestParam Integer idThongTinChung,
+            @RequestParam String loaiHocPhan,
+            @RequestParam String khoiKienThuc) {
+        return hocPhanService.sumTinChiByKhoiKienThuc(idThongTinChung, loaiHocPhan, khoiKienThuc);
+    }
+
+    @GetMapping("/sumTinChiLoaiKhoiKienThuc")
+    public Integer sumTinChiByLoaiKhoiKienThuc(
+            @RequestParam Integer idThongTinChung,
+            @RequestParam String loaiHocPhan,
+            @RequestParam String loaiKhoiKienThuc) {
+        return hocPhanService.sumTinChiByLoaiKhoiKienThuc(idThongTinChung, loaiHocPhan, loaiKhoiKienThuc);
+    }
 }

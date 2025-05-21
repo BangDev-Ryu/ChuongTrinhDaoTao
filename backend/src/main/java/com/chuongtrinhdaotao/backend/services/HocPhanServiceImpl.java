@@ -38,4 +38,16 @@ public class HocPhanServiceImpl implements HocPhanService {
     public void delete(Integer id) {
         repository.deleteById(id);
     }
+
+    @Override
+    public Integer sumTinChiByKhoiKienThuc(Integer idThongTinChung, String loaiHocPhan, String khoiKienThuc) {
+        Integer sum = repository.sumTinChiByKhoiKienThuc(idThongTinChung, loaiHocPhan, khoiKienThuc);
+        return sum != null ? sum : 0;
+    }
+
+    @Override
+    public Integer sumTinChiByLoaiKhoiKienThuc(Integer idThongTinChung, String loaiHocPhan, String loaiKhoiKienThuc) {
+        Integer sum = repository.sumTinChiByLoaiKhoiKienThuc(idThongTinChung, loaiHocPhan, loaiKhoiKienThuc);
+        return sum != null ? sum : 0;
+    }
 }
