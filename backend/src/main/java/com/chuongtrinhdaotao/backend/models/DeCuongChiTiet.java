@@ -24,5 +24,5 @@ public class DeCuongChiTiet {
     private String boPhanDanhGia;
     private String diemDanhGia;
     private Double trongSo;
-    private String hinhTHuc;
+    private String hinhThuc;
 }
