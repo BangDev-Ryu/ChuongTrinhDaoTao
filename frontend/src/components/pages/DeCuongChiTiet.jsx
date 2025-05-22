@@ -193,7 +193,7 @@ const DeCuongChiTiet = () => {
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>Khối kiến thức</th>
+            <th>Tên học phần</th>
             <th>Bộ phận đánh giá</th>
             <th>Điểm đánh giá</th>
             <th>Trọng số</th>
@@ -204,7 +204,7 @@ const DeCuongChiTiet = () => {
         <tbody>
           {currentItems.map((item) => (
             <tr key={item.id}>
-              <td>{item.hocPhan?.id} - {item.hocPhan?.ten}</td>
+              <td>{item.hocPhan?.ten}</td>
               <td>{item.boPhanDanhGia}</td>
               <td>{item.diemDanhGia}</td>
               <td>{item.trongSo}</td>
