@@ -10,7 +10,6 @@ const DeCuongChiTiet = () => {
   const [itemsPerPage] = useState(10)
   const [searchTerm, setSearchTerm] = useState("")
   const [danhSachHocPhan, setDanhSachHocPhan] = useState([])
-  const [diemDanhGiaOptions, setDiemDanhGiaOptions] = useState([])
   const [formData, setFormData] = useState({
     id_hoc_phan: '',
     boPhanDanhGia: '',
@@ -257,6 +256,7 @@ const DeCuongChiTiet = () => {
               ))}
             </Form.Select>
           </Form.Group>
+
            <Form.Group className="mb-3">
   <Form.Label>Bộ phận đánh giá</Form.Label>
   <Form.Select
