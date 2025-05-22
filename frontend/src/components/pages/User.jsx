@@ -2,70 +2,64 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Modal, Form } from "react-bootstrap";
 import axios from "axios";
 
-const VienChuc = () => {
+const User = () => {
   const [data, setData] = useState([]);
+  const [giangVienList, setGiangVienList] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
-  const [formData, setFormData] = useState({ ten: "", description: "" });
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    giangVien: null,
+  });
 
   useEffect(() => {
     fetchData();
+    fetchGiangVien();
   }, []);
-
   const fetchData = async () => {
-    try {
-      const response = await axios.get("http://localhost:8080/vienChuc");
-      setData(response.data);
-    } catch (error) {
-      console.error("Lỗi lấy dữ liệu:", error);
-    }
+    const res = await axios.get("http://localhost:8080/user");
+    setData(res.data);
+  };
+  const fetchGiangVien = async () => {
+    const res = await axios.get("http://localhost:8080/giangVien");
+    setGiangVienList(res.data);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      if (currentItem) {
-        await axios.put(
-          `http://localhost:8080/vienChuc/${currentItem.id}`,
-          formData
-        );
-      } else {
-        await axios.post("http://localhost:8080/vienChuc", formData);
-      }
-      fetchData();
-      setShowModal(false);
-      setCurrentItem(null);
-      setFormData({ ten: "", description: "" });
-    } catch (error) {
-      alert(
-        "Có lỗi xảy ra: " + (error.response?.data?.message || error.message)
-      );
+    const payload = {
+      ...formData,
+      giangVien: formData.giangVien ? { id: formData.giangVien } : null,
+    };
+    if (currentItem) {
+      await axios.put(`http://localhost:8080/user/${currentItem.id}`, payload);
+    } else {
+      await axios.post("http://localhost:8080/user", payload);
     }
+    fetchData();
+    setShowModal(false);
+    setCurrentItem(null);
+    setFormData({ username: "", password: "", giangVien: null });
   };
 
   const handleDelete = async (id) => {
     if (window.confirm("Xác nhận xóa?")) {
-      try {
-        await axios.delete(`http://localhost:8080/vienChuc/${id}`);
-        fetchData();
-      } catch (error) {
-        alert(
-          "Lỗi khi xóa: " + (error.response?.data?.message || error.message)
-        );
-      }
+      await axios.delete(`http://localhost:8080/user/${id}`);
+      fetchData();
     }
   };
 
   return (
     <div className="container mt-4">
       <div className="d-flex justify-content-between mb-3">
-        <h2>Viên chức</h2>
+        <h2>User</h2>
         <Button
           onClick={() => {
             setShowModal(true);
             setCurrentItem(null);
-            setFormData({ ten: "", description: "" });
+            setFormData({ username: "", password: "", giangVien: null });
           }}
         >
           Thêm mới
@@ -74,16 +68,14 @@ const VienChuc = () => {
       <Table bordered>
         <thead>
           <tr>
-            <th>Tên</th>
-            <th>Mô tả</th>
+            <th>Username</th>
             <th>Hành động</th>
           </tr>
         </thead>
         <tbody>
           {data.map((item) => (
             <tr key={item.id}>
-              <td>{item.ten}</td>
-              <td>{item.description}</td>
+              <td>{item.username}</td>
               <td>
                 <Button
                   size="sm"
@@ -103,8 +95,9 @@ const VienChuc = () => {
                   onClick={() => {
                     setCurrentItem(item);
                     setFormData({
-                      ten: item.ten,
-                      description: item.description,
+                      username: item.username,
+                      password: item.password,
+                      giangVien: item.giangVien?.id || null,
                     });
                     setShowModal(true);
                   }}
@@ -125,28 +118,49 @@ const VienChuc = () => {
       </Table>
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>{currentItem ? "Sửa" : "Thêm"} viên chức</Modal.Title>
+          <Modal.Title>{currentItem ? "Sửa" : "Thêm"} user</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
-              <Form.Label>Tên</Form.Label>
+              <Form.Label>Username</Form.Label>
               <Form.Control
-                value={formData.ten}
+                value={formData.username}
                 onChange={(e) =>
-                  setFormData({ ...formData, ten: e.target.value })
+                  setFormData({ ...formData, username: e.target.value })
                 }
                 required
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Mô tả</Form.Label>
+              <Form.Label>Password</Form.Label>
               <Form.Control
-                value={formData.description}
+                type="password"
+                value={formData.password}
                 onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
+                  setFormData({ ...formData, password: e.target.value })
                 }
+                required
               />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Giảng viên</Form.Label>
+              <Form.Select
+                value={formData.giangVien || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    giangVien: e.target.value ? Number(e.target.value) : null,
+                  })
+                }
+              >
+                <option value="">-- Không chọn --</option>
+                {giangVienList.map((gv) => (
+                  <option key={gv.id} value={gv.id}>
+                    {gv.ten} (ID: {gv.id})
+                  </option>
+                ))}
+              </Form.Select>
             </Form.Group>
             <Button type="submit">
               {currentItem ? "Cập nhật" : "Thêm mới"}
@@ -156,19 +170,21 @@ const VienChuc = () => {
       </Modal>
       <Modal show={showViewModal} onHide={() => setShowViewModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Thông tin viên chức</Modal.Title>
+          <Modal.Title>Thông tin user</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div>
-            <b>Tên:</b> {currentItem?.ten}
+            <b>Username:</b> {currentItem?.username}
           </div>
           <div>
-            <b>Mô tả:</b> {currentItem?.description}
+            <b>Giảng viên:</b>{" "}
+            {currentItem?.giangVien
+              ? `${currentItem.giangVien.ten} (ID: ${currentItem.giangVien.id})`
+              : ""}
           </div>
         </Modal.Body>
       </Modal>
     </div>
   );
 };
-
-export default VienChuc;
+export default User;

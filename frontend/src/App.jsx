@@ -9,6 +9,8 @@ import MoNhomPhanCong from './components/pages/MoNhomPhanCong';
 import GiangVien from './components/pages/GiangVien';
 import KeHoachDayHoc from './components/pages/KeHoachDayHoc';
 import VienChuc from './components/pages/VienChuc';
+import User from './components/pages/User';
+import ChucDanh from './components/pages/ChucDanh';
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
             <Route path="/MoNhomPhanCong" element={<MoNhomPhanCong />} />
             <Route path="/GiangVien" element={<GiangVien />} />
             <Route path="/VienChuc" element={<VienChuc />} />
+            <Route path="/User" element={<User />} />
+            <Route path="/ChucDanh" element={<ChucDanh />} />
           </Routes>
         </main>
       </div>

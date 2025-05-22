@@ -4,18 +4,17 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "vien_chuc")
+@Table(name = "chuc_danh")
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class VienChuc {
+public class ChucDanh {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  private String ten;
-
+  private String name;
   private String description;
 }
