@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Table, Button, Modal, Form, Pagination } from 'react-bootstrap'
 import axios from 'axios'
+import Select from 'react-select';
+import CreatableSelect from 'react-select/creatable';
 
 const DeCuongChiTiet = () => {
   const [data, setData] = useState([])
@@ -17,6 +19,12 @@ const DeCuongChiTiet = () => {
     trongSo: '',
     hinhThuc: '',
   })
+
+    const hocPhanOptions = danhSachHocPhan.map((hp) => ({
+    label: `${hp.id} - ${hp.ten}`,
+    value: hp.id,
+  }));
+
 
   const danhGiaOptions = {
   "1. Đánh giá quá trình": [
@@ -36,6 +44,11 @@ const DeCuongChiTiet = () => {
     "Điểm cuối kì (>=0.5)"
   ]
 }
+
+const boPhanOptions = Object.keys(danhGiaOptions).map((bp) => ({
+  label: bp,
+  value: bp,
+}));  
 
 
   useEffect(() => {
@@ -241,58 +254,71 @@ const DeCuongChiTiet = () => {
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
-                      <Form.Group className="mb-3">
-            <Form.Label>Học phần</Form.Label>
-            <Form.Select
-              value={formData.id_hoc_phan}
-              onChange={(e) => setFormData({ ...formData, id_hoc_phan: e.target.value })}
-              required
-            >
-              <option value="">-- Chọn tên học phần --</option>
-              {danhSachHocPhan.map((hp) => (
-                <option key={hp.id} value={hp.id}>
-                  {hp.id} - {hp.ten}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
+                
 
-           <Form.Group className="mb-3">
-  <Form.Label>Bộ phận đánh giá</Form.Label>
-  <Form.Select
-    value={formData.boPhanDanhGia}
-    onChange={(e) => {
-      const selectedBoPhan = e.target.value
-      setFormData({
-        ...formData,
-        boPhanDanhGia: selectedBoPhan,
-        diemDanhGia: "" // reset điểm đánh giá khi bộ phận thay đổi
-      })
-    }}
-    required
-  >
-    <option value="">-- Chọn bộ phận đánh giá --</option>
-    {Object.keys(danhGiaOptions).map((bp) => (
-      <option key={bp} value={bp}>{bp}</option>
-    ))}
-  </Form.Select>
-</Form.Group>
-<Form.Group className="mb-3">
+            <Form.Group className="mb-3">
+              <Form.Label>Học phần</Form.Label>
+              <Select
+                options={hocPhanOptions}
+                value={hocPhanOptions.find((opt) => opt.value === formData.id_hoc_phan) || null}
+                onChange={(selected) =>
+                  setFormData({ ...formData, id_hoc_phan: selected?.value || '' })
+                }
+                placeholder="Chọn học phần"
+                isClearable
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Bộ phận đánh giá</Form.Label>
+              <Select
+                options={boPhanOptions}
+                value={boPhanOptions.find((opt) => opt.value === formData.boPhanDanhGia) || null}
+                onChange={(selected) =>
+                  setFormData({
+                    ...formData,
+                    boPhanDanhGia: selected?.value || '',
+                    diemDanhGia: '', // reset điểm đánh giá khi bộ phận thay đổi
+                  })
+                }
+                placeholder="Chọn bộ phận đánh giá"
+                isClearable
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
   <Form.Label>Điểm đánh giá</Form.Label>
-  <Form.Select
-    value={formData.diemDanhGia}
-    onChange={(e) =>
-      setFormData({ ...formData, diemDanhGia: e.target.value })
+  <CreatableSelect
+    isDisabled={!formData.boPhanDanhGia}
+    isClearable
+    isSearchable
+    options={(danhGiaOptions[formData.boPhanDanhGia] || []).map((diem) => ({
+      label: diem,
+      value: diem,
+    }))}
+    value={
+      formData.diemDanhGia
+        ? { label: formData.diemDanhGia, value: formData.diemDanhGia }
+        : null
     }
-    required
-    disabled={!formData.boPhanDanhGia}
-  >
-    <option value="">-- Chọn điểm đánh giá --</option>
-    {(danhGiaOptions[formData.boPhanDanhGia] || []).map((diem) => (
-      <option key={diem} value={diem}>{diem}</option>
-    ))}
-  </Form.Select>
+    onChange={(selected) =>
+      setFormData({ ...formData, diemDanhGia: selected?.value || '' })
+    }
+    styles={{
+      option: (provided, state) => ({
+        ...provided,
+        backgroundColor: state.isFocused ? '#f0f0f0' : 'white',
+        color: 'black',
+      }),
+      control: (base) => ({
+        ...base,
+        borderColor: 'gray',
+      }),
+    }}
+    placeholder="Nhập hoặc chọn điểm đánh giá"
+  />
 </Form.Group>
+
 
 
             <Form.Group className="mb-3">

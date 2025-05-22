@@ -609,7 +609,9 @@ const fetchDanhSachDeCuongChiTiet = async () => {
       </tr>
 
        <tr>
-       <td>1.2.5</td>
+       <td>
+        {filteredDetails[6]?.diemDanhGia}
+       </td>
           <td className="text-center">
              {filteredDetails[6]?.trongSo}
           </td>
