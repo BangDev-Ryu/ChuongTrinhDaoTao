@@ -24,6 +24,7 @@ const HocPhan = () => {
     soTinChi: '',
     ten: '',
   })
+  
   const khoiKienThucOptions = {
   "Khối kiến thức giáo dục đại cương": [
     "Kiến thức Lý luận chính trị",
@@ -39,8 +40,6 @@ const HocPhan = () => {
 };
 
 const loaiHocPhanOptions = ["Bắt buộc", "Không bắt buộc"];
-
- 
 
 
   useEffect(() => {
