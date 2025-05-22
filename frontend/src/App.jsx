@@ -8,6 +8,7 @@ import DeCuongChiTiet from './components/pages/DeCuongChiTiet';
 import MoNhomPhanCong from './components/pages/MoNhomPhanCong';
 import GiangVien from './components/pages/GiangVien';
 import KeHoachDayHoc from './components/pages/KeHoachDayHoc';
+import VienChuc from './components/pages/VienChuc';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/KeHoachDayHoc" element={<KeHoachDayHoc />} />
             <Route path="/MoNhomPhanCong" element={<MoNhomPhanCong />} />
             <Route path="/GiangVien" element={<GiangVien />} />
+            <Route path="/VienChuc" element={<VienChuc />} />
           </Routes>
         </main>
       </div>

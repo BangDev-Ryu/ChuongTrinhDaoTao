@@ -75,6 +75,17 @@ const Sidebar = () => {
                 Giảng viên
             </NavLink>
         </Nav.Item>
+
+                <Nav.Item> 
+            <NavLink 
+                to='/VienChuc'
+                className={({isActive}) => 
+                  `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
+                }>
+                <i className="bi bi-clipboard-check me-2"></i>
+                Viên chức
+            </NavLink>
+        </Nav.Item>
     </Nav>
   )
 }

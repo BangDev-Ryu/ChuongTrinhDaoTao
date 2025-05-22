@@ -2,10 +2,10 @@
 -- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
--- Máy chủ: localhost
--- Thời gian đã tạo: Th5 20, 2025 lúc 05:29 PM
--- Phiên bản máy phục vụ: 10.4.32-MariaDB
--- Phiên bản PHP: 8.2.12
+-- Host: mysql
+-- Generation Time: May 23, 2025 at 03:59 PM
+-- Server version: 9.2.0
+-- PHP Version: 8.2.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,62 +18,63 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Cơ sở dữ liệu: `chuongtrinhdaotao`
+-- Database: `chuongtrinhdaotao`
 --
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `de_cuong_chi_tiet`
+-- Table structure for table `de_cuong_chi_tiet`
 --
 
 CREATE TABLE `de_cuong_chi_tiet` (
-  `id` int(11) NOT NULL,
-  `bo_phan_danh_gia` varchar(255) DEFAULT NULL,
-  `diem_danh_gia` varchar(255) DEFAULT NULL,
-  `hinhthuc` varchar(255) DEFAULT NULL,
+  `id` int NOT NULL,
+  `bo_phan_danh_gia` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `diem_danh_gia` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `hinhthuc` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `trong_so` double DEFAULT NULL,
-  `id_hoc_phan` int(11) DEFAULT NULL
+  `id_hoc_phan` int DEFAULT NULL,
+  `hinh_thuc` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `giang_vien`
+-- Table structure for table `giang_vien`
 --
 
 CREATE TABLE `giang_vien` (
-  `id` int(11) NOT NULL,
-  `chuc_danh` varchar(255) DEFAULT NULL,
-  `nam_sinh` int(11) NOT NULL,
-  `ten` varchar(255) DEFAULT NULL
+  `id` int NOT NULL,
+  `chuc_danh` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `nam_sinh` int NOT NULL,
+  `ten` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `hoc_phan`
+-- Table structure for table `hoc_phan`
 --
 
 CREATE TABLE `hoc_phan` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `he_so` double DEFAULT NULL,
-  `hoc_ky_thuc_hien` int(11) DEFAULT NULL,
-  `khoi_kien_thuc` varchar(255) DEFAULT NULL,
-  `loai_hoc_phan` varchar(255) DEFAULT NULL,
-  `loai_khoi_kien_thuc` varchar(255) DEFAULT NULL,
-  `ma_hoc_phan` varchar(255) DEFAULT NULL,
-  `ma_hoc_phan_truoc` varchar(255) DEFAULT NULL,
-  `so_ly_thuyet` int(11) DEFAULT NULL,
-  `so_thuc_hanh` int(11) DEFAULT NULL,
-  `so_thuc_tap` int(11) DEFAULT NULL,
-  `so_tin_chi` int(11) DEFAULT NULL,
-  `ten` varchar(255) DEFAULT NULL,
-  `id_thong_tin_chung` int(11) DEFAULT NULL
+  `hoc_ky_thuc_hien` int DEFAULT NULL,
+  `khoi_kien_thuc` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `loai_hoc_phan` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `loai_khoi_kien_thuc` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ma_hoc_phan` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ma_hoc_phan_truoc` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `so_ly_thuyet` int DEFAULT NULL,
+  `so_thuc_hanh` int DEFAULT NULL,
+  `so_thuc_tap` int DEFAULT NULL,
+  `so_tin_chi` int DEFAULT NULL,
+  `ten` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `id_thong_tin_chung` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `hoc_phan`
+-- Dumping data for table `hoc_phan`
 --
 
 INSERT INTO `hoc_phan` (`id`, `he_so`, `hoc_ky_thuc_hien`, `khoi_kien_thuc`, `loai_hoc_phan`, `loai_khoi_kien_thuc`, `ma_hoc_phan`, `ma_hoc_phan_truoc`, `so_ly_thuyet`, `so_thuc_hanh`, `so_thuc_tap`, `so_tin_chi`, `ten`, `id_thong_tin_chung`) VALUES
@@ -111,54 +112,54 @@ INSERT INTO `hoc_phan` (`id`, `he_so`, `hoc_ky_thuc_hien`, `khoi_kien_thuc`, `lo
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `ke_hoach_mo_nhom`
+-- Table structure for table `ke_hoach_mo_nhom`
 --
 
 CREATE TABLE `ke_hoach_mo_nhom` (
-  `id` int(11) NOT NULL,
-  `khoa` varchar(255) DEFAULT NULL,
-  `so_luong_sinh_vien_nhom` int(11) DEFAULT NULL,
-  `tong_so_nhom` int(11) DEFAULT NULL,
-  `id_hoc_phan` int(11) DEFAULT NULL
+  `id` int NOT NULL,
+  `khoa` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `so_luong_sinh_vien_nhom` int DEFAULT NULL,
+  `tong_so_nhom` int DEFAULT NULL,
+  `id_hoc_phan` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `phan_cong_giang_day`
+-- Table structure for table `phan_cong_giang_day`
 --
 
 CREATE TABLE `phan_cong_giang_day` (
-  `id` int(11) NOT NULL,
-  `nhom` varchar(255) DEFAULT NULL,
-  `so_tiet_thuc_hien` int(11) DEFAULT NULL,
-  `so_tiet_thuc_te` int(11) DEFAULT NULL,
-  `id_giang_vien` int(11) DEFAULT NULL,
-  `id_ke_hoach_mo_nhom` int(11) DEFAULT NULL
+  `id` int NOT NULL,
+  `nhom` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `so_tiet_thuc_hien` int DEFAULT NULL,
+  `so_tiet_thuc_te` int DEFAULT NULL,
+  `id_giang_vien` int DEFAULT NULL,
+  `id_ke_hoach_mo_nhom` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `thong_tin_chung`
+-- Table structure for table `thong_tin_chung`
 --
 
 CREATE TABLE `thong_tin_chung` (
-  `id` int(11) NOT NULL,
-  `bac` varchar(255) DEFAULT NULL,
-  `ban_hanh` varchar(255) DEFAULT NULL,
-  `khoa_quan_ly` varchar(255) DEFAULT NULL,
-  `loai_bang` varchar(255) DEFAULT NULL,
-  `loai_hinh_dao_tao` varchar(255) DEFAULT NULL,
-  `ngon_ngu` varchar(255) DEFAULT NULL,
-  `ten` varchar(255) DEFAULT NULL,
-  `thoi_gian` varchar(255) DEFAULT NULL,
-  `tin_chi_tich_luy` int(11) DEFAULT NULL,
-  `website` varchar(255) DEFAULT NULL
+  `id` int NOT NULL,
+  `bac` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ban_hanh` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `khoa_quan_ly` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `loai_bang` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `loai_hinh_dao_tao` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ngon_ngu` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ten` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `thoi_gian` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tin_chi_tich_luy` int DEFAULT NULL,
+  `website` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `thong_tin_chung`
+-- Dumping data for table `thong_tin_chung`
 --
 
 INSERT INTO `thong_tin_chung` (`id`, `bac`, `ban_hanh`, `khoa_quan_ly`, `loai_bang`, `loai_hinh_dao_tao`, `ngon_ngu`, `ten`, `thoi_gian`, `tin_chi_tich_luy`, `website`) VALUES
@@ -167,49 +168,68 @@ INSERT INTO `thong_tin_chung` (`id`, `bac`, `ban_hanh`, `khoa_quan_ly`, `loai_ba
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `user`
+-- Table structure for table `user`
 --
 
 CREATE TABLE `user` (
-  `id` int(11) NOT NULL,
-  `password` varchar(255) DEFAULT NULL,
-  `username` varchar(255) DEFAULT NULL,
-  `id_giang_vien` int(11) DEFAULT NULL
+  `id` int NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `username` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `id_giang_vien` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Chỉ mục cho các bảng đã đổ
+-- Table structure for table `vien_chuc`
+--
+
+CREATE TABLE `vien_chuc` (
+  `id` int NOT NULL,
+  `ten` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `vien_chuc`
+--
+
+INSERT INTO `vien_chuc` (`id`, `ten`) VALUES
+(1, 'admin'),
+(2, 'giang_vien');
+
+--
+-- Indexes for dumped tables
 --
 
 --
--- Chỉ mục cho bảng `de_cuong_chi_tiet`
+-- Indexes for table `de_cuong_chi_tiet`
 --
 ALTER TABLE `de_cuong_chi_tiet`
   ADD PRIMARY KEY (`id`),
   ADD KEY `FK9sjs07783ppqtn6tkrw0doc8u` (`id_hoc_phan`);
 
 --
--- Chỉ mục cho bảng `giang_vien`
+-- Indexes for table `giang_vien`
 --
 ALTER TABLE `giang_vien`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `hoc_phan`
+-- Indexes for table `hoc_phan`
 --
 ALTER TABLE `hoc_phan`
   ADD PRIMARY KEY (`id`),
   ADD KEY `FKkbdtp1rp6in6un0g7rf2tihf4` (`id_thong_tin_chung`);
 
 --
--- Chỉ mục cho bảng `ke_hoach_mo_nhom`
+-- Indexes for table `ke_hoach_mo_nhom`
 --
 ALTER TABLE `ke_hoach_mo_nhom`
   ADD PRIMARY KEY (`id`),
   ADD KEY `FKqwvwemuyojg4g8jji4g409jl3` (`id_hoc_phan`);
 
 --
--- Chỉ mục cho bảng `phan_cong_giang_day`
+-- Indexes for table `phan_cong_giang_day`
 --
 ALTER TABLE `phan_cong_giang_day`
   ADD PRIMARY KEY (`id`),
@@ -217,95 +237,107 @@ ALTER TABLE `phan_cong_giang_day`
   ADD KEY `FK8fw9ot9w65lqtnktp2llm8dea` (`id_ke_hoach_mo_nhom`);
 
 --
--- Chỉ mục cho bảng `thong_tin_chung`
+-- Indexes for table `thong_tin_chung`
 --
 ALTER TABLE `thong_tin_chung`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `user`
+-- Indexes for table `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `UKlna0xa288wi61x2vi8hjb8bte` (`id_giang_vien`);
 
 --
--- AUTO_INCREMENT cho các bảng đã đổ
+-- Indexes for table `vien_chuc`
+--
+ALTER TABLE `vien_chuc`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT cho bảng `de_cuong_chi_tiet`
+-- AUTO_INCREMENT for table `de_cuong_chi_tiet`
 --
 ALTER TABLE `de_cuong_chi_tiet`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `giang_vien`
+-- AUTO_INCREMENT for table `giang_vien`
 --
 ALTER TABLE `giang_vien`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `hoc_phan`
+-- AUTO_INCREMENT for table `hoc_phan`
 --
 ALTER TABLE `hoc_phan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
--- AUTO_INCREMENT cho bảng `ke_hoach_mo_nhom`
+-- AUTO_INCREMENT for table `ke_hoach_mo_nhom`
 --
 ALTER TABLE `ke_hoach_mo_nhom`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `phan_cong_giang_day`
+-- AUTO_INCREMENT for table `phan_cong_giang_day`
 --
 ALTER TABLE `phan_cong_giang_day`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `thong_tin_chung`
+-- AUTO_INCREMENT for table `thong_tin_chung`
 --
 ALTER TABLE `thong_tin_chung`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT cho bảng `user`
+-- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- Ràng buộc đối với các bảng kết xuất
+-- AUTO_INCREMENT for table `vien_chuc`
+--
+ALTER TABLE `vien_chuc`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- Constraints for dumped tables
 --
 
 --
--- Ràng buộc cho bảng `de_cuong_chi_tiet`
+-- Constraints for table `de_cuong_chi_tiet`
 --
 ALTER TABLE `de_cuong_chi_tiet`
   ADD CONSTRAINT `FK9sjs07783ppqtn6tkrw0doc8u` FOREIGN KEY (`id_hoc_phan`) REFERENCES `hoc_phan` (`id`);
 
 --
--- Ràng buộc cho bảng `hoc_phan`
+-- Constraints for table `hoc_phan`
 --
 ALTER TABLE `hoc_phan`
   ADD CONSTRAINT `FKkbdtp1rp6in6un0g7rf2tihf4` FOREIGN KEY (`id_thong_tin_chung`) REFERENCES `thong_tin_chung` (`id`);
 
 --
--- Ràng buộc cho bảng `ke_hoach_mo_nhom`
+-- Constraints for table `ke_hoach_mo_nhom`
 --
 ALTER TABLE `ke_hoach_mo_nhom`
   ADD CONSTRAINT `FKqwvwemuyojg4g8jji4g409jl3` FOREIGN KEY (`id_hoc_phan`) REFERENCES `hoc_phan` (`id`);
 
 --
--- Ràng buộc cho bảng `phan_cong_giang_day`
+-- Constraints for table `phan_cong_giang_day`
 --
 ALTER TABLE `phan_cong_giang_day`
   ADD CONSTRAINT `FK8fw9ot9w65lqtnktp2llm8dea` FOREIGN KEY (`id_ke_hoach_mo_nhom`) REFERENCES `ke_hoach_mo_nhom` (`id`),
   ADD CONSTRAINT `FKhtgwvewsdrwfwgnip4w8ogovr` FOREIGN KEY (`id_giang_vien`) REFERENCES `giang_vien` (`id`);
 
 --
--- Ràng buộc cho bảng `user`
+-- Constraints for table `user`
 --
 ALTER TABLE `user`
   ADD CONSTRAINT `FK88u2l09qm37o38yrec7c5xi48` FOREIGN KEY (`id_giang_vien`) REFERENCES `giang_vien` (`id`);
