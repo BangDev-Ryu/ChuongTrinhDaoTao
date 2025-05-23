@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { Table, Button, Modal, Form, Pagination } from 'react-bootstrap'
-import axios from 'axios'
+import axios from 'axios';
+import { useEffect, useMemo, useState } from 'react';
+import { Button, Form, Modal, Pagination, Table } from 'react-bootstrap';
 
 const HocPhan = () => {
   const [data, setData] = useState([])
@@ -55,7 +55,7 @@ const loaiHocPhanOptions = ["Bắt buộc", "Không bắt buộc"];
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/hocPhan')
+      const response = await axios.get(`${API_BASE}/hocPhan`)
       setData(response.data)
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -64,7 +64,7 @@ const loaiHocPhanOptions = ["Bắt buộc", "Không bắt buộc"];
 
   const fetchDanhSachThongTinChung = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/thongTinChung')
+    const response = await axios.get(`${API_BASE}/thongTinChung`)
     setDanhSachThongTinChung(response.data)
   } catch (error) {
     console.error('Lỗi khi lấy danh sách thông tin chung:', error)
@@ -73,7 +73,7 @@ const loaiHocPhanOptions = ["Bắt buộc", "Không bắt buộc"];
 
 const fetchDanhSachDeCuongChiTiet = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/deCuongChiTiet')
+    const response = await axios.get(`${API_BASE}/deCuongChiTiet`)
     setDanhSachDeCuongChiTiet(response.data)
   } catch (error) {
     console.error('Lỗi khi lấy danh sách đề cương chi tiết:', error)
@@ -101,9 +101,9 @@ const fetchDanhSachDeCuongChiTiet = async () => {
     };
 
     if (currentItem) {
-      await axios.put(`http://localhost:8080/hocPhan/${currentItem.id}`, payload);
+      await axios.put(`http://192.168.1.18:8080/hocPhan/${currentItem.id}`, payload);
     } else {
-      await axios.post('http://localhost:8080/hocPhan', payload);
+      await axios.post(`${API_BASE}/hocPhan`, payload);
     }
 
     fetchData();
@@ -118,7 +118,7 @@ const fetchDanhSachDeCuongChiTiet = async () => {
   const handleDelete = async (id) => {
     if (window.confirm('Xác nhận xóa?')) {
       try {
-        await axios.delete(`http://localhost:8080/hocPhan/${id}`)
+        await axios.delete(`http://192.168.1.18:8080/hocPhan/${id}`)
         fetchData()
       } catch (error) {
         console.error('Error deleting item:', error)

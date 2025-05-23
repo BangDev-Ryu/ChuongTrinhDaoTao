@@ -19,7 +19,7 @@ const KeHoachDayHoc = () => {
   // Lấy danh sách học phần từ API
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/hocPhan');
+      const response = await axios.get(`${API_BASE}/hocPhan`);
       setData(response.data);
     } catch (error) {
       console.error('Lỗi lấy dữ liệu:', error);
@@ -29,7 +29,7 @@ const KeHoachDayHoc = () => {
   // Lấy danh sách chương trình đào tạo từ API
   const fetchChuongTrinhDaoTao = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/thongTinChung');
+      const response = await axios.get(`${API_BASE}/thongTinChung`);
       setChuongTrinhDaoTaoList(response.data);  // Lưu danh sách chương trình đào tạo
     } catch (error) {
       console.error('Lỗi lấy danh sách chương trình đào tạo:', error);
