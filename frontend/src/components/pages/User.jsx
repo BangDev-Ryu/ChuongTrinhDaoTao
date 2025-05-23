@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useMemo } from "react"; // <-- Ensure useMemo is imported
 import { Alert, Button, Form, Modal, Table } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 
@@ -11,13 +11,12 @@ const User = () => {
   const [currentItem, setCurrentItem] = useState(null);
   const [error, setError] = useState(null);
 
-  // React Hook Form setup
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-    setValue,
+    watch,
   } = useForm({
     defaultValues: {
       username: "",
@@ -26,9 +25,10 @@ const User = () => {
     },
   });
 
-  // Fetch data with React Query
+  const passwordValue = watch("password");
+
   const {
-    data = [],
+    data: usersData = [],
     isLoading,
     isError,
   } = useQuery({
@@ -44,8 +44,8 @@ const User = () => {
     },
   });
 
-  const { data: giangVienList = [] } = useQuery({
-    queryKey: ["giangVien", { userLinked: false }],
+  const { data: unlinkedGiangVienList = [] } = useQuery({
+    queryKey: ["giangVien", "unlinked"],
     queryFn: async () => {
       try {
         const response = await axios.get(
@@ -59,7 +59,50 @@ const User = () => {
     },
   });
 
-  // Mutations with React Query
+  // This query is still useful for keeping the cache fresh for the specific assigned giangvien,
+  // but its data is no longer strictly necessary for the *initial* dropdown population.
+  const { data: currentUsersAssignedGiangVien = null } = useQuery({
+    queryKey: ["giangVien", currentItem?.giangVien?.id],
+    queryFn: async () => {
+      if (currentItem && currentItem.giangVien && currentItem.giangVien.id) {
+        try {
+          const response = await axios.get(
+            `${API_BASE}/giangVien/${currentItem.giangVien.id}`
+          );
+          return response.data;
+        } catch (err) {
+          setError(err.response?.data?.message || err.message);
+          throw err;
+        }
+      }
+      return null;
+    },
+    enabled: showModal && currentItem && currentItem.giangVien?.id !== null,
+  });
+
+  // --- MODIFIED useMemo for giangVienOptions ---
+  const giangVienOptions = useMemo(() => {
+    let combinedList = [...unlinkedGiangVienList];
+
+    // If we are editing a user AND that user has a giangVien assigned
+    if (currentItem && currentItem.giangVien) {
+      const assignedGiangVien = currentItem.giangVien; // Get the giangVien object directly from currentItem
+
+      // Check if this assigned giangVien is already in the unlinked list
+      const isAlreadyInCombined = combinedList.some(
+        (gv) => gv.id === assignedGiangVien.id
+      );
+
+      // If it's not already there, add it to ensure it appears in the dropdown
+      if (!isAlreadyInCombined) {
+        combinedList.push(assignedGiangVien);
+      }
+    }
+    // Sort the list for better UX (optional)
+    return combinedList.sort((a, b) => a.ten.localeCompare(b.ten));
+  }, [unlinkedGiangVienList, currentItem]); // <-- currentUsersAssignedGiangVien is removed from dependencies
+
+  // Mutations (no significant changes here)
   const createMutation = useMutation({
     mutationFn: (newUser) => {
       const payload = {
@@ -70,6 +113,7 @@ const User = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["users"]);
+      queryClient.invalidateQueries(["giangVien", "unlinked"]);
       setShowModal(false);
       reset();
       setError(null);
@@ -82,13 +126,18 @@ const User = () => {
   const updateMutation = useMutation({
     mutationFn: (updatedUser) => {
       const payload = {
-        ...updatedUser,
+        username: updatedUser.username,
         giangVien: updatedUser.giangVien ? { id: updatedUser.giangVien } : null,
       };
+      if (updatedUser.password && updatedUser.password.trim() !== "") {
+        payload.password = updatedUser.password;
+      }
       return axios.put(`${API_BASE}/user/${currentItem.id}`, payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["users"]);
+      queryClient.invalidateQueries(["giangVien", "unlinked"]);
+      queryClient.invalidateQueries(["giangVien", currentItem?.giangVien?.id]);
       setShowModal(false);
       reset();
       setCurrentItem(null);
@@ -103,6 +152,7 @@ const User = () => {
     mutationFn: (id) => axios.delete(`${API_BASE}/user/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries(["users"]);
+      queryClient.invalidateQueries(["giangVien", "unlinked"]);
       setError(null);
     },
     onError: (err) => {
@@ -128,8 +178,8 @@ const User = () => {
     setCurrentItem(user);
     reset({
       username: user.username,
-      password: user.password,
-      giangVien: user.giangVien?.id || null,
+      password: "",
+      giangVien: user.giangVien?.id || null, // This correctly sets the initial value
     });
     setShowModal(true);
   };
@@ -149,7 +199,6 @@ const User = () => {
 
   return (
     <div className="container mt-4">
-      {/* Error Alert */}
       {error && (
         <Alert variant="danger" onClose={() => setError(null)} dismissible>
           {error}
@@ -169,7 +218,7 @@ const User = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((item) => (
+          {usersData.map((item) => (
             <tr key={item.id}>
               <td>{item.username}</td>
               <td>
@@ -229,7 +278,7 @@ const User = () => {
               <Form.Control
                 type="password"
                 {...register("password", {
-                  required: "Password là bắt buộc",
+                  required: currentItem ? false : "Password là bắt buộc",
                   minLength: {
                     value: 6,
                     message: "Password phải có ít nhất 6 ký tự",
@@ -240,6 +289,11 @@ const User = () => {
               <Form.Control.Feedback type="invalid">
                 {errors.password?.message}
               </Form.Control.Feedback>
+              {currentItem && (
+                <Form.Text className="text-muted">
+                  Để trống nếu không muốn đổi mật khẩu.
+                </Form.Text>
+              )}
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -250,7 +304,7 @@ const User = () => {
                 })}
               >
                 <option value="">-- Không chọn --</option>
-                {giangVienList.map((gv) => (
+                {giangVienOptions.map((gv) => (
                   <option key={gv.id} value={gv.id}>
                     {gv.ten} (ID: {gv.id})
                   </option>

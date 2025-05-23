@@ -1,11 +1,20 @@
 package com.chuongtrinhdaotao.backend.models;
 
-import jakarta.persistence.*;
+import org.springframework.lang.Nullable;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.lang.Nullable;
 
 @Entity
 @Table(name = "user")
@@ -20,6 +29,8 @@ public class User {
   private Integer id;
 
   private String username;
+
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   private String password;
 
   @Nullable
