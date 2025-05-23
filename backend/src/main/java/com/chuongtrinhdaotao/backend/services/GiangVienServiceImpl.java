@@ -5,6 +5,7 @@ import com.chuongtrinhdaotao.backend.repositories.GiangVienRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,5 +38,10 @@ public class GiangVienServiceImpl implements GiangVienService {
   @Override
   public void delete(Integer id) {
     repository.deleteById(id);
+  }
+
+  @Override
+  public List<GiangVien> findAll(Specification<GiangVien> spec) {
+    return repository.findAll(spec);
   }
 }

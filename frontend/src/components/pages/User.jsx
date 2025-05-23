@@ -45,10 +45,12 @@ const User = () => {
   });
 
   const { data: giangVienList = [] } = useQuery({
-    queryKey: ["giangVien"],
+    queryKey: ["giangVien", { userLinked: false }],
     queryFn: async () => {
       try {
-        const response = await axios.get(`${API_BASE}/giangVien`);
+        const response = await axios.get(
+          `${API_BASE}/giangVien?userLinked=false`
+        );
         return response.data;
       } catch (err) {
         setError(err.response?.data?.message || err.message);
@@ -83,10 +85,7 @@ const User = () => {
         ...updatedUser,
         giangVien: updatedUser.giangVien ? { id: updatedUser.giangVien } : null,
       };
-      return axios.put(
-        `${API_BASE}/user/${currentItem.id}`,
-        payload
-      );
+      return axios.put(`${API_BASE}/user/${currentItem.id}`, payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["users"]);
