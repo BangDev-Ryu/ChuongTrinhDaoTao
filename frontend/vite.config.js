@@ -5,6 +5,6 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   define: {
-    API_BASE: JSON.stringify("http://192.168.1.18:8080"),
+    API_BASE: JSON.stringify("http://localhost:8080"),
   },
 });
