@@ -67,16 +67,6 @@ const Sidebar = () => {
 
         <Nav.Item> 
             <NavLink 
-                to='/User'
-                className={({isActive}) => 
-                  `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
-                }>
-                <i className="bi bi-person me-2"></i>
-                User
-            </NavLink>
-        </Nav.Item>
-        <Nav.Item> 
-            <NavLink 
                 to='/GiangVien'
                 className={({isActive}) => 
                   `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
@@ -85,14 +75,15 @@ const Sidebar = () => {
                 Giảng viên
             </NavLink>
         </Nav.Item>
-        <Nav.Item> 
+
+                <Nav.Item> 
             <NavLink 
-                to='/ChucDanh'
+                to='/VienChuc'
                 className={({isActive}) => 
                   `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
                 }>
-                <i className="bi bi-award me-2"></i>
-                Chức danh
+                <i className="bi bi-clipboard-check me-2"></i>
+                Viên chức
             </NavLink>
         </Nav.Item>
     </Nav>

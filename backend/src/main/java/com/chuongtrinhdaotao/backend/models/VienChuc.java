@@ -10,12 +10,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VienChuc {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
-
-  private String ten;
-
-  private String description;
+    private String ten;
 }

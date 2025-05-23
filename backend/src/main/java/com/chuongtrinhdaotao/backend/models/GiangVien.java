@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.lang.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "giang_vien")
@@ -14,17 +16,14 @@ import org.springframework.lang.Nullable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GiangVien {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+    private String ten;
+    private String chucDanh;
+    private int namSinh;
 
-  private String ten;
-
-  @Nullable
-  @ManyToOne
-  @JoinColumn(name = "id_chuc_danh")
-  private ChucDanh chucDanh;
-
-  private int namSinh;
+    @OneToOne(mappedBy = "giangVien", cascade = CascadeType.ALL, orphanRemoval = true)
+    private User user;
 }

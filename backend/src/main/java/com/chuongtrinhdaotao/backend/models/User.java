@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.lang.Nullable;
 
 @Entity
 @Table(name = "user")
@@ -14,16 +13,14 @@ import org.springframework.lang.Nullable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+    private String username;
+    private String password;
 
-  private String username;
-  private String password;
-
-  @Nullable
-  @OneToOne
-  @JoinColumn(name = "id_giang_vien")
-  private GiangVien giangVien;
+    @OneToOne
+    @JoinColumn(name = "id_giang_vien")
+    private GiangVien giangVien;
 }
