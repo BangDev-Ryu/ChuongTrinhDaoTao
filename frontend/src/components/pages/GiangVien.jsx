@@ -1,73 +1,170 @@
-import React, { useState, useEffect } from "react";
-import { Table, Button, Modal, Form } from "react-bootstrap";
+import React, { useState } from "react";
+import { Table, Button, Modal, Form, Alert } from "react-bootstrap";
+import { useForm } from "react-hook-form";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
 const GiangVien = () => {
-  const [data, setData] = useState([]);
-  const [chucDanhList, setChucDanhList] = useState([]);
+  const queryClient = useQueryClient();
   const [showModal, setShowModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
-  const [formData, setFormData] = useState({
-    ten: "",
-    chucDanh: null,
-    namSinh: "",
+  const [error, setError] = useState(null);
+
+  // React Hook Form setup
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+    setValue,
+  } = useForm({
+    defaultValues: {
+      ten: "",
+      chucDanh: null,
+      namSinh: "",
+    },
   });
 
-  useEffect(() => {
-    fetchData();
-    fetchChucDanh();
-  }, []);
-  const fetchData = async () => {
-    const res = await axios.get("http://localhost:8080/giangVien");
-    setData(res.data);
-  };
-  const fetchChucDanh = async () => {
-    const res = await axios.get("http://localhost:8080/chucDanh");
-    setChucDanhList(res.data);
-  };
+  // Fetch data with React Query
+  const {
+    data = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["giangVien"],
+    queryFn: async () => {
+      try {
+        const response = await axios.get(`${API_BASE}/giangVien`);
+        return response.data;
+      } catch (err) {
+        setError(err.response?.data?.message || err.message);
+        throw err;
+      }
+    },
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const payload = {
-      ...formData,
-      chucDanh: formData.chucDanh ? { id: formData.chucDanh } : null,
-    };
-    if (currentItem) {
-      await axios.put(
-        `http://localhost:8080/giangVien/${currentItem.id}`,
+  const { data: chucDanhList = [] } = useQuery({
+    queryKey: ["chucDanh"],
+    queryFn: async () => {
+      try {
+        const response = await axios.get(`${API_BASE}/chucDanh`);
+        return response.data;
+      } catch (err) {
+        setError(err.response?.data?.message || err.message);
+        throw err;
+      }
+    },
+  });
+
+  // Mutations with React Query
+  const createMutation = useMutation({
+    mutationFn: (newGiangVien) => {
+      const payload = {
+        ...newGiangVien,
+        chucDanh: newGiangVien.chucDanh ? { id: newGiangVien.chucDanh } : null,
+      };
+      return axios.post(`${API_BASE}/giangVien`, payload);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["giangVien"]);
+      setShowModal(false);
+      reset();
+      setError(null);
+    },
+    onError: (err) => {
+      setError(err.response?.data?.message || err.message);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (updatedGiangVien) => {
+      const payload = {
+        ...updatedGiangVien,
+        chucDanh: updatedGiangVien.chucDanh
+          ? { id: updatedGiangVien.chucDanh }
+          : null,
+      };
+      return axios.put(
+        `http://192.168.1.18:8080/giangVien/${currentItem.id}`,
         payload
       );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["giangVien"]);
+      setShowModal(false);
+      reset();
+      setCurrentItem(null);
+      setError(null);
+    },
+    onError: (err) => {
+      setError(err.response?.data?.message || err.message);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) =>
+      axios.delete(`http://192.168.1.18:8080/giangVien/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["giangVien"]);
+      setError(null);
+    },
+    onError: (err) => {
+      setError(err.response?.data?.message || err.message);
+    },
+  });
+
+  const onSubmit = (data) => {
+    if (currentItem) {
+      updateMutation.mutate(data);
     } else {
-      await axios.post("http://localhost:8080/giangVien", payload);
+      createMutation.mutate(data);
     }
-    fetchData();
-    setShowModal(false);
-    setCurrentItem(null);
-    setFormData({ ten: "", chucDanh: null, namSinh: "" });
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     if (window.confirm("Xác nhận xóa?")) {
-      await axios.delete(`http://localhost:8080/giangVien/${id}`);
-      fetchData();
+      deleteMutation.mutate(id);
     }
   };
+
+  const handleEdit = (giangVien) => {
+    setCurrentItem(giangVien);
+    reset({
+      ten: giangVien.ten,
+      chucDanh: giangVien.chucDanh?.id || null,
+      namSinh: giangVien.namSinh,
+    });
+    setShowModal(true);
+  };
+
+  const handleAddNew = () => {
+    setCurrentItem(null);
+    reset({
+      ten: "",
+      chucDanh: null,
+      namSinh: "",
+    });
+    setShowModal(true);
+  };
+
+  if (isLoading) return <div className="container mt-4">Loading...</div>;
+  if (isError) return <div className="container mt-4">Error loading data</div>;
 
   return (
     <div className="container mt-4">
+      {/* Error Alert */}
+      {error && (
+        <Alert variant="danger" onClose={() => setError(null)} dismissible>
+          {error}
+        </Alert>
+      )}
+
       <div className="d-flex justify-content-between mb-3">
         <h2>Giảng viên</h2>
-        <Button
-          onClick={() => {
-            setShowModal(true);
-            setCurrentItem(null);
-            setFormData({ ten: "", chucDanh: null, namSinh: "" });
-          }}
-        >
-          Thêm mới
-        </Button>
+        <Button onClick={handleAddNew}>Thêm mới</Button>
       </div>
+
       <Table bordered>
         <thead>
           <tr>
@@ -84,7 +181,7 @@ const GiangVien = () => {
               <td>
                 {item.chucDanh
                   ? `${item.chucDanh.name} (ID: ${item.chucDanh.id})`
-                  : ""}
+                  : "Không có"}
               </td>
               <td>{item.namSinh}</td>
               <td>
@@ -103,15 +200,7 @@ const GiangVien = () => {
                   size="sm"
                   variant="info"
                   className="me-2"
-                  onClick={() => {
-                    setCurrentItem(item);
-                    setFormData({
-                      ten: item.ten,
-                      chucDanh: item.chucDanh?.id || null,
-                      namSinh: item.namSinh,
-                    });
-                    setShowModal(true);
-                  }}
+                  onClick={() => handleEdit(item)}
                 >
                   Sửa
                 </Button>
@@ -119,40 +208,40 @@ const GiangVien = () => {
                   size="sm"
                   variant="danger"
                   onClick={() => handleDelete(item.id)}
+                  disabled={deleteMutation.isLoading}
                 >
-                  Xóa
+                  {deleteMutation.isLoading ? "Đang xóa..." : "Xóa"}
                 </Button>
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
+
+      {/* Add/Edit Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>{currentItem ? "Sửa" : "Thêm"} giảng viên</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={handleSubmit(onSubmit)}>
             <Form.Group className="mb-3">
               <Form.Label>Tên</Form.Label>
               <Form.Control
-                value={formData.ten}
-                onChange={(e) =>
-                  setFormData({ ...formData, ten: e.target.value })
-                }
-                required
+                {...register("ten", { required: "Tên là bắt buộc" })}
+                isInvalid={!!errors.ten}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.ten?.message}
+              </Form.Control.Feedback>
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Chức danh</Form.Label>
               <Form.Select
-                value={formData.chucDanh || ""}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    chucDanh: e.target.value ? Number(e.target.value) : null,
-                  })
-                }
+                {...register("chucDanh", {
+                  setValueAs: (value) => (value === "" ? null : Number(value)),
+                })}
               >
                 <option value="">-- Không chọn --</option>
                 {chucDanhList.map((cd) => (
@@ -162,23 +251,46 @@ const GiangVien = () => {
                 ))}
               </Form.Select>
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Năm sinh</Form.Label>
               <Form.Control
                 type="number"
-                value={formData.namSinh}
-                onChange={(e) =>
-                  setFormData({ ...formData, namSinh: e.target.value })
-                }
-                required
+                {...register("namSinh", {
+                  required: "Năm sinh là bắt buộc",
+                  min: {
+                    value: 1900,
+                    message: "Năm sinh phải lớn hơn hoặc bằng 1900",
+                  },
+                  max: {
+                    value: new Date().getFullYear(),
+                    message: `Năm sinh không được vượt quá ${new Date().getFullYear()}`,
+                  },
+                })}
+                isInvalid={!!errors.namSinh}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.namSinh?.message}
+              </Form.Control.Feedback>
             </Form.Group>
-            <Button type="submit">
-              {currentItem ? "Cập nhật" : "Thêm mới"}
+
+            <Button
+              type="submit"
+              disabled={createMutation.isLoading || updateMutation.isLoading}
+            >
+              {currentItem
+                ? updateMutation.isLoading
+                  ? "Đang cập nhật..."
+                  : "Cập nhật"
+                : createMutation.isLoading
+                ? "Đang thêm..."
+                : "Thêm mới"}
             </Button>
           </Form>
         </Modal.Body>
       </Modal>
+
+      {/* View Modal */}
       <Modal show={showViewModal} onHide={() => setShowViewModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Thông tin giảng viên</Modal.Title>
@@ -191,7 +303,7 @@ const GiangVien = () => {
             <b>Chức danh:</b>{" "}
             {currentItem?.chucDanh
               ? `${currentItem.chucDanh.name} (ID: ${currentItem.chucDanh.id})`
-              : ""}
+              : "Không có"}
           </div>
           <div>
             <b>Năm sinh:</b> {currentItem?.namSinh}
@@ -201,4 +313,5 @@ const GiangVien = () => {
     </div>
   );
 };
+
 export default GiangVien;
