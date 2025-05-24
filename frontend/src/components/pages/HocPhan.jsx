@@ -44,7 +44,7 @@ const HocPhan = () => {
   ]
 };
 
-const loaiHocPhanOptions = ["Bắt buộc", "Không bắt buộc"];
+const loaiHocPhanOptions = ["Bắt buộc", "Tự chọn"];
 
 
   useEffect(() => {
@@ -243,15 +243,17 @@ const fetchDanhSachDeCuongChiTiet = async () => {
     .replace(/\p{Diacritic}/gu, '')   // loại bỏ dấu
     .toLowerCase()                    // chuyển về chữ thường
 
-   const filteredData = data.filter(item => {
-    const term = normalizeText(searchTerm);
-    return (
-      normalizeText(item.thongTinChunng?.ten || "").includes(term) ||
-      normalizeText(item.ten).includes(term) ||
-      normalizeText(item.maHocPhan).includes(term) ||
-      normalizeText(item.maHocPhanTruoc.toString()).includes(term)
-    );
-  });
+  const filteredData = data.filter(item => {
+  const term = normalizeText(searchTerm);
+  return (
+    normalizeText(item.thongTinChunng?.ten || "").includes(term) ||
+    normalizeText(item.ten).includes(term) ||
+    normalizeText(item.maHocPhan).includes(term) ||
+    normalizeText(item.maHocPhanTruoc.toString()).includes(term) ||
+    normalizeText(item.loaiHocPhan).includes(term)
+  );
+});
+
 
 
       const daiCuong = useMemo(() => {
@@ -361,7 +363,7 @@ const fetchDanhSachDeCuongChiTiet = async () => {
               <td>{item.maHocPhan}</td>
               <td>{item.ten}</td>
               <td>{item.soTinChi}</td>
-              <td>{item.heSo}</td>
+              <td>{item.loaiHocPhan}</td>
               <td>{item.maHocPhanTruoc}</td>
               <td>
                 <Button
@@ -445,10 +447,11 @@ const fetchDanhSachDeCuongChiTiet = async () => {
 
                  <Form.Group className="mb-3">
           <Form.Label>Loại khối kiến thức</Form.Label>
+
           <Form.Select
             value={formData.loaiKhoiKienThuc}
             onChange={(e) => {
-              const newKhoi = e.target.value;
+              const newLoai = e.target.value;
               setFormData({
                 ...formData,
                 loaiKhoiKienThuc: newKhoi,
@@ -458,13 +461,12 @@ const fetchDanhSachDeCuongChiTiet = async () => {
             required
           >
             <option value="">-- Chọn loại khối kiến thức --</option>
+
             {Object.keys(khoiKienThucOptions).map((key) => (
               <option key={key} value={key}>{key}</option>
             ))}
           </Form.Select>
         </Form.Group>
-
-
               </div>
 
               <div className="col-md-6">
