@@ -25,11 +25,12 @@ const MoNhomPhanCong = () => {
   const [formPhanCong, setFormPhanCong] = useState({
     id_giang_vien: '',
     nhom: '',
+    loaiNhom: '', // Thêm trường này
     soTietThucHien: '',
     soTietThucTe: ''
   });
 
-  const [currentPhanCong, setCurrentPhanCong] = useState(null); 
+  const [currentPhanCong, setCurrentPhanCong] = useState(null);
   const [selectedKeHoachInfo, setSelectedKeHoachInfo] = useState({
     tongSoTiet: 0,
     heSo: 0
@@ -151,7 +152,7 @@ const MoNhomPhanCong = () => {
     try {
       if (currentItem) {
         const totalAssignedGroups = await getTotalAssignedGroupsForKeHoach(currentItem.id);
-        
+
         if (parseInt(formData.tongSoNhom) < totalAssignedGroups) {
           alert(`Không thể giảm tổng số nhóm xuống ${formData.tongSoNhom}. Hiện tại đã phân công ${totalAssignedGroups} nhóm.`);
           return;
@@ -170,7 +171,7 @@ const MoNhomPhanCong = () => {
       } else {
         await axios.post('http://localhost:8080/keHoachMoNhom', payload);
       }
-      
+
       fetchData();
       fetchAvailableHocPhan();
       handleCloseModal();
@@ -220,7 +221,7 @@ const MoNhomPhanCong = () => {
       try {
         await axios.delete(`http://localhost:8080/keHoachMoNhom/${id}`)
         fetchData()
-        fetchAvailableHocPhan() 
+        fetchAvailableHocPhan()
       } catch (error) {
         console.error('Error:', error)
         alert('Có lỗi xảy ra khi xóa')
@@ -231,10 +232,10 @@ const MoNhomPhanCong = () => {
   const handleShowDetailModal = async (item) => {
     try {
       setSelectedKeHoach(item);
-      const tongSoTiet = item.hocPhan.soLyThuyet + 
-                        item.hocPhan.soThucHanh + 
-                        item.hocPhan.soThucTap;
-      
+      const tongSoTiet = item.hocPhan.soLyThuyet +
+        item.hocPhan.soThucHanh +
+        item.hocPhan.soThucTap;
+
       setSelectedKeHoachInfo({
         tongSoTiet: tongSoTiet,
         heSo: item.hocPhan.heSo
@@ -242,9 +243,9 @@ const MoNhomPhanCong = () => {
 
       await Promise.all([
         fetchGiangVien(),
-        fetchPhanCong(item.id) 
+        fetchPhanCong(item.id)
       ]);
-      
+
       setShowDetailModal(true);
     } catch (error) {
       console.error('Error:', error);
@@ -259,9 +260,11 @@ const MoNhomPhanCong = () => {
   };
 
   const handleShowPhanCongModal = () => {
+    setShowDetailModal(false);
     setFormPhanCong({
       id_giang_vien: '',
       nhom: '',
+      loaiNhom: '', // Thêm trường này
       soTietThucHien: '',
       soTietThucTe: ''
     });
@@ -270,18 +273,25 @@ const MoNhomPhanCong = () => {
 
   const handleClosePhanCongModal = () => {
     setShowPhanCongModal(false);
+    setShowDetailModal(true);
     setFormPhanCong({
       id_giang_vien: '',
       nhom: '',
+      loaiNhom: '', // Thêm trường này
       soTietThucHien: '',
       soTietThucTe: ''
     });
+    setCurrentPhanCong(null);
   };
 
   const handleEditPhanCong = (phanCong) => {
+    setShowDetailModal(false);
+    // Lấy số nhóm bằng cách chỉ lấy phần số
+    const nhomNumber = phanCong.nhom.split('-')[0];
     setFormPhanCong({
       id_giang_vien: phanCong.giangVien.id,
-      nhom: phanCong.nhom,
+      nhom: nhomNumber, // Chỉ lưu phần số
+      loaiNhom: phanCong.nhom.includes('-') ? phanCong.nhom.split('-')[1] : '',
       soTietThucHien: phanCong.soTietThucHien,
       soTietThucTe: phanCong.soTietThucTe
     });
@@ -312,8 +322,13 @@ const MoNhomPhanCong = () => {
         return;
       }
 
+      const nhomValue = formPhanCong.loaiNhom 
+        ? `${formPhanCong.nhom} - ${formPhanCong.loaiNhom}`
+        : formPhanCong.nhom;
+
       const payload = {
         ...formPhanCong,
+        nhom: nhomValue, // Gửi giá trị đã kết hợp
         keHoachMoNhom: { id: selectedKeHoach.id },
         giangVien: { id: formPhanCong.id_giang_vien }
       };
@@ -325,7 +340,9 @@ const MoNhomPhanCong = () => {
       }
 
       await fetchPhanCong(selectedKeHoach.id);
-      handleClosePhanCongModal();
+      setShowPhanCongModal(false);
+      setShowDetailModal(true); // Hiện lại modal chi tiết
+      setCurrentPhanCong(null);
     } catch (error) {
       console.error('Error:', error);
       alert('Có lỗi xảy ra');
@@ -333,14 +350,15 @@ const MoNhomPhanCong = () => {
   };
 
   const getTotalAssignedGroups = () => {
-    const currentAssignments = danhSachPhanCong.filter(pc => 
+    const currentAssignments = danhSachPhanCong.filter(pc =>
       !currentPhanCong || pc.id !== currentPhanCong.id
     );
     return currentAssignments.reduce((sum, pc) => sum + parseInt(pc.nhom || 0), 0);
   };
 
   const handleNhomChange = (e) => {
-    const nhom = e.target.value;
+    // Chỉ cho phép nhập số
+    const nhom = e.target.value.replace(/[^0-9]/g, '');
     const totalAssigned = getTotalAssignedGroups();
     const newTotal = totalAssigned + parseInt(nhom || 0);
 
@@ -349,23 +367,81 @@ const MoNhomPhanCong = () => {
       return;
     }
 
-    const tongSoTiet = selectedKeHoach.hocPhan.soLyThuyet + 
-                       selectedKeHoach.hocPhan.soThucHanh + 
-                       selectedKeHoach.hocPhan.soThucTap;
-    const soTietThucHien = nhom ? tongSoTiet * parseInt(nhom) : 0;
+    let soTiet = 0;
+    switch (formPhanCong.loaiNhom) {
+      case 'LT':
+        soTiet = selectedKeHoach.hocPhan.soLyThuyet;
+        break;
+      case 'BT':
+        soTiet = selectedKeHoach.hocPhan.soThucTap;
+        break;
+      case 'TH':
+        soTiet = selectedKeHoach.hocPhan.soThucHanh;
+        break;
+      default:
+        soTiet = selectedKeHoach.hocPhan.soLyThuyet + 
+                 selectedKeHoach.hocPhan.soThucHanh + 
+                 selectedKeHoach.hocPhan.soThucTap;
+    }
+
+    // Tính số tiết dựa trên số nhóm (bỏ qua các ký tự khác)
+    const nhomNumber = parseInt(nhom || 0);
+    const soTietThucHien = nhomNumber * soTiet;
     const soTietThucTe = soTietThucHien * selectedKeHoach.hocPhan.heSo;
 
     setFormPhanCong({
       ...formPhanCong,
+      // Lưu chỉ số nhóm vào state
       nhom: nhom,
-      soTietThucHien: soTietThucHien,
-      soTietThucTe: soTietThucTe
+      soTietThucHien,
+      soTietThucTe
     });
   };
 
   const getAvailableGiangVien = () => {
     const assignedGiangVienIds = danhSachPhanCong.map(pc => pc.giangVien.id);
     return danhSachGiangVien.filter(gv => !assignedGiangVienIds.includes(gv.id));
+  };
+
+  const handleLoaiNhomChange = (loaiNhom) => {
+    const nhom = formPhanCong.nhom;
+    let soTiet = 0;
+
+    switch (loaiNhom) {
+      case 'LT':
+        soTiet = selectedKeHoach.hocPhan.soLyThuyet;
+        break;
+      case 'BT':
+        soTiet = selectedKeHoach.hocPhan.soThucTap;
+        break;
+      case 'TH':
+        soTiet = selectedKeHoach.hocPhan.soThucHanh;
+        break;
+      default:
+        soTiet = selectedKeHoach.hocPhan.soLyThuyet + 
+                 selectedKeHoach.hocPhan.soThucHanh + 
+                 selectedKeHoach.hocPhan.soThucTap;
+    }
+
+    const soTietThucHien = nhom ? soTiet * parseInt(nhom) : 0;
+    const soTietThucTe = soTietThucHien * selectedKeHoach.hocPhan.heSo;
+
+    setFormPhanCong({
+      ...formPhanCong,
+      loaiNhom,
+      soTietThucHien,
+      soTietThucTe
+    });
+  };
+
+  const resetFormPhanCong = () => {
+    setFormPhanCong({
+      id_giang_vien: '',
+      nhom: '',
+      loaiNhom: '',
+      soTietThucHien: '',
+      soTietThucTe: ''
+    });
   };
 
   return (
@@ -403,23 +479,23 @@ const MoNhomPhanCong = () => {
             <tr key={item.id}>
               <td>{item.hocPhan?.maHocPhan}</td>
               <td>{item.hocPhan?.ten}</td>
-              <td>{item.hocPhan?.soTinChi}</td>
+              <td className="text-center">{item.hocPhan?.soTinChi}</td>
               <td>{item.khoa}</td>
-              <td>{item.hocPhan?.soLyThuyet}</td>
-              <td>{item.hocPhan?.soThucTap}</td>
-              <td>{item.hocPhan?.soThucHanh}</td>
-              <td>{item.hocPhan?.soLyThuyet + item.hocPhan?.soThucTap + item.hocPhan?.soThucHanh}</td>
-              <td>{item.hocPhan?.heSo}</td>
-              <td>{item.tongSoNhom}</td>
-              <td>{item.soLuongSinhVienNhom}</td>
-              <td>
-                <Button variant="info" size="sm" className="me-2" onClick={() => handleShowDetailModal(item)}>
+              <td className="text-center">{item.hocPhan?.soLyThuyet}</td>
+              <td className="text-center">{item.hocPhan?.soThucTap}</td>
+              <td className="text-center">{item.hocPhan?.soThucHanh}</td>
+              <td className="text-center">{item.hocPhan?.soLyThuyet + item.hocPhan?.soThucTap + item.hocPhan?.soThucHanh}</td>
+              <td className="text-center">{item.hocPhan?.heSo}</td>
+              <td className="text-center">{item.tongSoNhom}</td>
+              <td className="text-center">{item.soLuongSinhVienNhom}</td>
+              <td className="text-nowrap text-center">
+                <Button variant="info" size="sm" className="me-1" onClick={() => handleShowDetailModal(item)}>
                   Xem chi tiết
                 </Button>
-                <Button variant="warning" size="sm" className="me-2" onClick={() => handleShowActionModal(item)}>
+                <Button variant="warning" size="sm" className="me-1" onClick={() => handleShowActionModal(item)}>
                   Sửa
                 </Button>
-                <Button variant="danger" size="sm" className="me-2" onClick={() => handleDelete(item.id)}>
+                <Button variant="danger" size="sm" onClick={() => handleDelete(item.id)}>
                   Xóa
                 </Button>
               </td>
@@ -625,7 +701,9 @@ const MoNhomPhanCong = () => {
                   {danhSachPhanCong.length > 0 ? (
                     danhSachPhanCong.map(pc => (
                       <tr key={pc.id}>
-                        <td className="text-center">{pc.nhom}</td>
+                        <td className="text-center">
+                          {`${pc.nhom}${pc.loaiNhom ? ` - ${pc.loaiNhom}` : ''}`}
+                        </td>
                         <td className="text-center">{pc.giangVien.id}</td>
                         <td className="text-center">{pc.giangVien.ten}</td>
                         <td className="text-center">{pc.soTietThucHien}</td>
@@ -661,7 +739,7 @@ const MoNhomPhanCong = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseDetailModal}>
-            Đóng
+            Hủy
           </Button>
         </Modal.Footer>
       </Modal>
@@ -715,17 +793,35 @@ const MoNhomPhanCong = () => {
               </div>
 
               <div className="col-md-6">
-                <Form.Group className="mb-4">
-                  <Form.Label>Nhóm</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={formPhanCong.nhom}
-                    onChange={handleNhomChange}
-                    required
-                  />
-                </Form.Group>
+                <div className="row">
+                  <div className="col-md-6">
+                    <Form.Group className="mb-4">
+                      <Form.Label>Nhóm</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={formPhanCong.nhom}
+                        onChange={handleNhomChange}
+                        required
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="col-md-6">
+                    <Form.Group className="mb-4">
+                      <Form.Label>Loại</Form.Label>
+                      <Form.Select
+                        value={formPhanCong.loaiNhom}
+                        onChange={(e) => handleLoaiNhomChange(e.target.value)}
+                      >
+                        <option value="">Tất cả</option>
+                        <option value="LT">Lý thuyết</option>
+                        <option value="BT">Bài tập</option>
+                        <option value="TH">Thực hành</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </div>
+                </div>
               </div>
-
+              
               <div className="col-md-6">
                 <Form.Group className="mb-4">
                   <Form.Label>Số tiết thực hiện</Form.Label>
