@@ -9,6 +9,7 @@ const ThongTinChung = () => {
   const [currentItem, setCurrentItem] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage] = useState(5)
+  const [searchTerm, setSearchTerm] = useState("")
   const [formData, setFormData] = useState({
     ten: '',
     bac: '',
@@ -186,12 +187,24 @@ const ThongTinChung = () => {
       return 0;
     }
   }
+  
+  const normalizeText = (text) =>
+  (text || '')
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase()
 
-  // Pagination
+  // Lọc dữ liệu theo searchTerm
+  const filteredData = data.filter(item => {
+    const term = normalizeText(searchTerm);
+    return normalizeText(item.ten).includes(term);
+  });
+
+  // Cập nhật logic phân trang để sử dụng filteredData
   const indexOfLastItem = currentPage * itemsPerPage
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem)
-  const totalPages = Math.ceil(data.length / itemsPerPage)
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage  
+  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem)
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage)
 
   const paginationItems = []
   for (let number = 1; number <= totalPages; number++) {
@@ -210,9 +223,19 @@ const ThongTinChung = () => {
     <div className="container-fluid mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Quản lý thông tin chung</h2>
-        <Button variant="primary" onClick={() => handleShowActionModal()}>
-          Thêm mới
-        </Button>
+        <div className="d-flex align-items-center">
+          <Form.Control
+            type="text"
+            placeholder="Tìm kiếm theo tên..."
+            className="me-3"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ width: "250px" }}
+          />
+          <Button variant="primary" onClick={() => handleShowActionModal()}>
+            Thêm mới
+          </Button>
+        </div>
       </div>
 
       <Table striped bordered hover>
@@ -223,7 +246,6 @@ const ThongTinChung = () => {
             <th>Loại bằng</th>
             <th>Loại hình đào tạo</th>
             <th>Thời gian</th>
-            <th>Tín chỉ tích lũy</th>
             <th>Hành động</th>
           </tr>
         </thead>
@@ -235,7 +257,6 @@ const ThongTinChung = () => {
               <td>{item.loaiBang}</td>
               <td>{item.loaiHinhDaoTao}</td>
               <td>{item.thoiGian}</td>
-              <td>{item.tinChiTichLuy}</td>
               <td>
                 <Button
                   variant="success"
@@ -332,15 +353,6 @@ const ThongTinChung = () => {
               </div>
 
               <div className="col-md-6">
-                <Form.Group className="mb-3">
-                  <Form.Label>Tín chỉ tích lũy</Form.Label>
-                  <Form.Control
-                    type="number"
-                    value={formData.tinChiTichLuy}
-                    onChange={(e) => setFormData({...formData, tinChiTichLuy: parseInt(e.target.value)})}
-                    required
-                  />
-                </Form.Group>
 
                 <Form.Group className="mb-3">
                   <Form.Label>Khoa quản lý</Form.Label>
@@ -368,7 +380,6 @@ const ThongTinChung = () => {
                     type="text"
                     value={formData.website}
                     onChange={(e) => setFormData({...formData, website: e.target.value})}
-                    required
                   />
                 </Form.Group>
 
@@ -416,8 +427,12 @@ const ThongTinChung = () => {
               <tr>
                 <td className='fw-bold'>I</td>
                 <td className='fw-bold'>Khối kiến thức giáo dục đại cương</td>
-                <td className='fw-bold'>X</td>
-                <td className='fw-bold'>X</td>
+                <td className='fw-bold'>
+                  {tinChiTotals.ngoaiNgu.batBuoc + tinChiTotals.llct.batBuoc + tinChiTotals.khac.batBuoc}
+                </td>
+                <td className='fw-bold'>
+                  {tinChiTotals.ngoaiNgu.tuChon + tinChiTotals.llct.tuChon + tinChiTotals.khac.tuChon}
+                </td>
               </tr>
               <tr>
                 <td></td>
@@ -446,8 +461,12 @@ const ThongTinChung = () => {
               <tr>
                 <td className='fw-bold'>II</td>
                 <td className='fw-bold'>Khối kiến thức giáo dục chuyên nghiệp</td>
-                <td className='fw-bold'>X</td>
-                <td className='fw-bold'>X</td>
+                <td className='fw-bold'>
+                  {tinChiTotals.coSo.batBuoc + tinChiTotals.nganh.batBuoc + tinChiTotals.chuyenNganh.batBuoc}
+                </td>
+                <td className='fw-bold'>
+                  {tinChiTotals.coSo.tuChon + tinChiTotals.nganh.tuChon + tinChiTotals.chuyenNganh.tuChon}
+                </td>
               </tr>
               <tr>
                 <td></td>
@@ -470,17 +489,35 @@ const ThongTinChung = () => {
               <tr>
                 <td colSpan="2" className="text-end fw-bold">Tổng</td>
                 <td className='fw-bold'>
-                  X
+                  {tinChiTotals.ngoaiNgu.batBuoc + tinChiTotals.llct.batBuoc + tinChiTotals.khac.batBuoc + tinChiTotals.coSo.batBuoc + tinChiTotals.nganh.batBuoc + tinChiTotals.chuyenNganh.batBuoc}
                 </td>
                 <td className='fw-bold'>
-                  X
+                  {tinChiTotals.ngoaiNgu.tuChon + tinChiTotals.llct.tuChon + tinChiTotals.khac.tuChon + tinChiTotals.coSo.tuChon + tinChiTotals.nganh.tuChon + tinChiTotals.chuyenNganh.tuChon}
                 </td>
               </tr>
             </tbody>
             <tfoot>
               <tr>
                 <td colSpan="4">
-                  Số tín chỉ tối thiểu phải tích lũy (không tính số tín chỉ Giáo dục thể chất và Giáo dục quốc phòng và an ninh): 155
+                  Số tín chỉ tối thiểu phải tích lũy (không tính số tín chỉ Giáo dục thể chất và Giáo dục quốc phòng và an ninh):
+                  <span className='fw-bold'>
+                    {
+                      tinChiTotals.ngoaiNgu.batBuoc + 
+                      tinChiTotals.llct.batBuoc + 
+                      tinChiTotals.khac.batBuoc + 
+                      tinChiTotals.coSo.batBuoc + 
+                      tinChiTotals.nganh.batBuoc + 
+                      tinChiTotals.chuyenNganh.batBuoc + 
+                      tinChiTotals.ngoaiNgu.tuChon + 
+                      tinChiTotals.llct.tuChon + 
+                      tinChiTotals.khac.tuChon + 
+                      tinChiTotals.coSo.tuChon + 
+                      tinChiTotals.nganh.tuChon + 
+                      tinChiTotals.chuyenNganh.tuChon
+                      }
+
+                  </span>
+                  
                 </td>
               </tr>
             </tfoot>
@@ -495,5 +532,6 @@ const ThongTinChung = () => {
     </div>
   )
 }
+
 
 export default ThongTinChung
