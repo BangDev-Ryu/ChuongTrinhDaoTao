@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useState, useMemo } from "react"; // <-- Ensure useMemo is imported
+import { useState, useMemo } from "react";
 import { Alert, Button, Form, Modal, Table } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 
@@ -16,7 +16,6 @@ const User = () => {
     handleSubmit,
     reset,
     formState: { errors },
-    watch,
   } = useForm({
     defaultValues: {
       username: "",
@@ -24,8 +23,6 @@ const User = () => {
       giangVien: null,
     },
   });
-
-  const passwordValue = watch("password");
 
   const {
     data: usersData = [],
@@ -59,50 +56,55 @@ const User = () => {
     },
   });
 
-  // This query is still useful for keeping the cache fresh for the specific assigned giangvien,
-  // but its data is no longer strictly necessary for the *initial* dropdown population.
-  const { data: currentUsersAssignedGiangVien = null } = useQuery({
-    queryKey: ["giangVien", currentItem?.giangVien?.id],
-    queryFn: async () => {
-      if (currentItem && currentItem.giangVien && currentItem.giangVien.id) {
-        try {
-          const response = await axios.get(
-            `${API_BASE}/giangVien/${currentItem.giangVien.id}`
-          );
-          return response.data;
-        } catch (err) {
-          setError(err.response?.data?.message || err.message);
-          throw err;
-        }
-      }
-      return null;
-    },
-    enabled: showModal && currentItem && currentItem.giangVien?.id !== null,
-  });
+  // // This query is still useful for keeping the cache fresh for the specific assigned giangvien,
+  // // but its data is no longer strictly necessary for the *initial* dropdown population.
+  // const { data: currentUsersAssignedGiangVien = null } = useQuery({
+  //   queryKey: ["giangVien", currentItem?.giangVien?.id],
+  //   queryFn: async () => {
+  //     if (currentItem && currentItem.giangVien && currentItem.giangVien.id) {
+  //       try {
+  //         const response = await axios.get(
+  //           `${API_BASE}/giangVien/${currentItem.giangVien.id}`
+  //         );
+  //         return response.data;
+  //       } catch (err) {
+  //         setError(err.response?.data?.message || err.message);
+  //         throw err;
+  //       }
+  //     }
+  //     return null;
+  //   },
+  //   enabled: showModal && currentItem && currentItem.giangVien?.id !== null,
+  // });
 
-  // --- MODIFIED useMemo for giangVienOptions ---
   const giangVienOptions = useMemo(() => {
     let combinedList = [...unlinkedGiangVienList];
 
-    // If we are editing a user AND that user has a giangVien assigned
     if (currentItem && currentItem.giangVien) {
-      const assignedGiangVien = currentItem.giangVien; // Get the giangVien object directly from currentItem
-
-      // Check if this assigned giangVien is already in the unlinked list
+      const assignedGiangVien = currentItem.giangVien;
       const isAlreadyInCombined = combinedList.some(
         (gv) => gv.id === assignedGiangVien.id
       );
 
-      // If it's not already there, add it to ensure it appears in the dropdown
       if (!isAlreadyInCombined) {
-        combinedList.push(assignedGiangVien);
+        // Add label to the currently assigned giangVien
+        combinedList.push({
+          ...assignedGiangVien,
+          ten: `[Hiện tại] ${assignedGiangVien.ten}`,
+        });
+      } else {
+        // If already in list, modify the name to add label
+        combinedList = combinedList.map((gv) =>
+          gv.id === assignedGiangVien.id
+            ? { ...gv, ten: `[Hiện tại] ${gv.ten}` }
+            : gv
+        );
       }
     }
-    // Sort the list for better UX (optional)
     return combinedList.sort((a, b) => a.ten.localeCompare(b.ten));
-  }, [unlinkedGiangVienList, currentItem]); // <-- currentUsersAssignedGiangVien is removed from dependencies
+  }, [unlinkedGiangVienList, currentItem]);
 
-  // Mutations (no significant changes here)
+  // Mutations remain the same
   const createMutation = useMutation({
     mutationFn: (newUser) => {
       const payload = {
@@ -137,7 +139,6 @@ const User = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(["users"]);
       queryClient.invalidateQueries(["giangVien", "unlinked"]);
-      queryClient.invalidateQueries(["giangVien", currentItem?.giangVien?.id]);
       setShowModal(false);
       reset();
       setCurrentItem(null);
@@ -179,7 +180,7 @@ const User = () => {
     reset({
       username: user.username,
       password: "",
-      giangVien: user.giangVien?.id || null, // This correctly sets the initial value
+      giangVien: user.giangVien?.id || null,
     });
     setShowModal(true);
   };
@@ -214,6 +215,7 @@ const User = () => {
         <thead>
           <tr>
             <th>Username</th>
+            <th>Giảng viên</th>
             <th>Hành động</th>
           </tr>
         </thead>
@@ -221,6 +223,26 @@ const User = () => {
           {usersData.map((item) => (
             <tr key={item.id}>
               <td>{item.username}</td>
+              <td>
+                {item.giangVien ? (
+                  <div>
+                    <div>
+                      <strong>Tên:</strong> {item.giangVien.ten}
+                    </div>
+                    <div>
+                      <strong>Năm sinh:</strong> {item.giangVien.namSinh}
+                    </div>
+                    {item.giangVien.chucDanh && (
+                      <div>
+                        <strong>Chức danh:</strong>{" "}
+                        {item.giangVien.chucDanh.name}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  "Không có"
+                )}
+              </td>
               <td>
                 <Button
                   size="sm"
@@ -255,7 +277,7 @@ const User = () => {
         </tbody>
       </Table>
 
-      {/* Add/Edit Modal */}
+      {/* Add/Edit Modal - remains the same */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>{currentItem ? "Sửa" : "Thêm"} user</Modal.Title>
@@ -328,7 +350,7 @@ const User = () => {
         </Modal.Body>
       </Modal>
 
-      {/* View Modal */}
+      {/* View Modal - enhanced to show more details */}
       <Modal show={showViewModal} onHide={() => setShowViewModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Thông tin user</Modal.Title>
@@ -337,11 +359,30 @@ const User = () => {
           <div>
             <b>Username:</b> {currentItem?.username}
           </div>
-          <div>
-            <b>Giảng viên:</b>{" "}
-            {currentItem?.giangVien
-              ? `${currentItem.giangVien.ten} (ID: ${currentItem.giangVien.id})`
-              : "Không có"}
+          <div className="mt-3">
+            <h5>Thông tin giảng viên:</h5>
+            {currentItem?.giangVien ? (
+              <div>
+                <div>
+                  <b>Tên:</b> {currentItem.giangVien.ten}
+                </div>
+                <div>
+                  <b>Năm sinh:</b> {currentItem.giangVien.namSinh}
+                </div>
+                {currentItem.giangVien.chucDanh && (
+                  <div>
+                    <b>Chức danh:</b> {currentItem.giangVien.chucDanh.name}
+                    {currentItem.giangVien.chucDanh.description && (
+                      <div>
+                        <i>{currentItem.giangVien.chucDanh.description}</i>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div>Không có giảng viên được liên kết</div>
+            )}
           </div>
         </Modal.Body>
       </Modal>

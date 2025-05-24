@@ -49,7 +49,7 @@ const Sidebar = () => {
                 className={({isActive}) => 
                   `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
                 }>
-                <i class="bi bi-calendar-event me-2"></i>
+                <i className="bi bi-calendar-event me-2"></i>
                 Kế hoạch dạy học
             </NavLink>
         </Nav.Item>

@@ -71,6 +71,9 @@ public class UserServiceImpl implements UserService {
         existingUser.setPassword(oldHashedPassword);
       }
 
+      // set giang vien again because can unlink giang vien from user
+      existingUser.setGiangVien(user.getGiangVien());
+      
       return repository.save(existingUser);
     } else {
       if (user.getPassword() != null && !user.getPassword().isBlank()) {
