@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Generation Time: May 23, 2025 at 03:59 PM
+-- Generation Time: May 24, 2025 at 03:23 AM
 -- Server version: 9.2.0
 -- PHP Version: 8.2.28
 
@@ -20,6 +20,27 @@ SET time_zone = "+00:00";
 --
 -- Database: `chuongtrinhdaotao`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chuc_danh`
+--
+
+CREATE TABLE `chuc_danh` (
+  `id` int NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `chuc_danh`
+--
+
+INSERT INTO `chuc_danh` (`id`, `description`, `name`) VALUES
+(1, 'Truong khoa', 'truong_khoa'),
+(2, 'Pho khoa', 'pho_khoa'),
+(3, 'Giang vien', 'giang_vien');
 
 -- --------------------------------------------------------
 
@@ -47,8 +68,18 @@ CREATE TABLE `giang_vien` (
   `id` int NOT NULL,
   `chuc_danh` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `nam_sinh` int NOT NULL,
-  `ten` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `ten` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `id_chuc_danh` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `giang_vien`
+--
+
+INSERT INTO `giang_vien` (`id`, `chuc_danh`, `nam_sinh`, `ten`, `id_chuc_danh`) VALUES
+(1, NULL, 2003, 'Anh Sang Xanh 1', 3),
+(2, NULL, 1990, 'Anh SANg so', NULL),
+(3, NULL, 2003, 'the he tre', 1);
 
 -- --------------------------------------------------------
 
@@ -178,6 +209,15 @@ CREATE TABLE `user` (
   `id_giang_vien` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`id`, `password`, `username`, `id_giang_vien`) VALUES
+(1, '$2a$10$ab9PI17W7Noji3RW9I2vUeRmhGLeszoteK.8/ZDQz2SMhdQtscRv2', 'sieubeo', 2),
+(4, '$2a$10$RKCg5.eC/c7FIHEjt8ALUumDE5RJTLgKy5xJGA.s7TM0AnE5NQPIu', 'suieumanh', 1),
+(5, '$2a$10$M9KGniOVa390DSa4xW214eNb543Kdn/wPzjlR5oIpb5JRL/fCoA5m', 'nhacsikhongten', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -186,20 +226,27 @@ CREATE TABLE `user` (
 
 CREATE TABLE `vien_chuc` (
   `id` int NOT NULL,
-  `ten` varchar(255) DEFAULT NULL
+  `ten` varchar(255) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `vien_chuc`
 --
 
-INSERT INTO `vien_chuc` (`id`, `ten`) VALUES
-(1, 'admin'),
-(2, 'giang_vien');
+INSERT INTO `vien_chuc` (`id`, `ten`, `description`) VALUES
+(1, 'admin', NULL),
+(2, 'giang_vien', NULL);
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `chuc_danh`
+--
+ALTER TABLE `chuc_danh`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `de_cuong_chi_tiet`
@@ -212,7 +259,8 @@ ALTER TABLE `de_cuong_chi_tiet`
 -- Indexes for table `giang_vien`
 --
 ALTER TABLE `giang_vien`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK8sr2abov3fgjejc19qqm9fsv9` (`id_chuc_danh`);
 
 --
 -- Indexes for table `hoc_phan`
@@ -260,6 +308,12 @@ ALTER TABLE `vien_chuc`
 --
 
 --
+-- AUTO_INCREMENT for table `chuc_danh`
+--
+ALTER TABLE `chuc_danh`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `de_cuong_chi_tiet`
 --
 ALTER TABLE `de_cuong_chi_tiet`
@@ -269,7 +323,7 @@ ALTER TABLE `de_cuong_chi_tiet`
 -- AUTO_INCREMENT for table `giang_vien`
 --
 ALTER TABLE `giang_vien`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `hoc_phan`
@@ -299,7 +353,7 @@ ALTER TABLE `thong_tin_chung`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `vien_chuc`
@@ -316,6 +370,12 @@ ALTER TABLE `vien_chuc`
 --
 ALTER TABLE `de_cuong_chi_tiet`
   ADD CONSTRAINT `FK9sjs07783ppqtn6tkrw0doc8u` FOREIGN KEY (`id_hoc_phan`) REFERENCES `hoc_phan` (`id`);
+
+--
+-- Constraints for table `giang_vien`
+--
+ALTER TABLE `giang_vien`
+  ADD CONSTRAINT `FK8sr2abov3fgjejc19qqm9fsv9` FOREIGN KEY (`id_chuc_danh`) REFERENCES `chuc_danh` (`id`);
 
 --
 -- Constraints for table `hoc_phan`

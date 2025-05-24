@@ -41,7 +41,7 @@ const ThongTinChung = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/thongTinChung')
+      const response = await axios.get(`${API_BASE}/thongTinChung`)
       setData(response.data)
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -54,9 +54,9 @@ const ThongTinChung = () => {
     console.log('Form data being sent:', formData) // Thêm dòng này
     try {
       if (currentItem) {
-        await axios.put(`http://localhost:8080/thongTinChung/${currentItem.id}`, formData)
+        await axios.put(`${API_BASE}/thongTinChung/${currentItem.id}`, formData)
       } else {
-        await axios.post('http://localhost:8080/thongTinChung', formData)
+        await axios.post(`${API_BASE}/thongTinChung`, formData)
       }
       fetchData()
       handleCloseModal()
@@ -71,7 +71,7 @@ const ThongTinChung = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Xác nhận xóa?')) {
       try {
-        await axios.delete(`http://localhost:8080/thongTinChung/${id}`)
+        await axios.delete(`${API_BASE}/thongTinChung/${id}`)
         fetchData()
       } catch (error) {
         console.error('Error deleting item:', error)
@@ -174,7 +174,7 @@ const ThongTinChung = () => {
 
   const sumTinChiByKhoiKienThuc = async (idThongTinChung, loaiHocPhan, khoiKienThuc) => {
     try {
-      const response = await axios.get('http://localhost:8080/hocPhan/sumTinChiKhoiKienThuc', {
+      const response = await axios.get(`${API_BASE}/hocPhan/sumTinChiKhoiKienThuc`, {
         params: {
           idThongTinChung,
           loaiHocPhan,

@@ -58,7 +58,7 @@ const boPhanOptions = Object.keys(danhGiaOptions).map((bp) => ({
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/deCuongChiTiet')
+      const response = await axios.get(`${API_BASE}/deCuongChiTiet`)
       setData(response.data)
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -67,7 +67,7 @@ const boPhanOptions = Object.keys(danhGiaOptions).map((bp) => ({
 
   const fetchDanhSachHocPhan = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/hocPhan')
+    const response = await axios.get(`${API_BASE}/hocPhan`)
     setDanhSachHocPhan(response.data)
   } catch (error) {
     console.error('Lỗi khi lấy danh sách học phần:', error)
@@ -86,9 +86,9 @@ const boPhanOptions = Object.keys(danhGiaOptions).map((bp) => ({
     }
 
     if (currentItem) {
-      await axios.put(`http://localhost:8080/deCuongChiTiet/${currentItem.id}`, payload)
+      await axios.put(`${API_BASE}/deCuongChiTiet/${currentItem.id}`, payload)
     } else {
-      await axios.post('http://localhost:8080/deCuongChiTiet', payload)
+      await axios.post(`${API_BASE}/deCuongChiTiet`, payload)
     }
 
     fetchData()
@@ -102,7 +102,7 @@ const boPhanOptions = Object.keys(danhGiaOptions).map((bp) => ({
   const handleDelete = async (id) => {
     if (window.confirm('Xác nhận xóa?')) {
       try {
-        await axios.delete(`http://localhost:8080/deCuongChiTiet/${id}`)
+        await axios.delete(`${API_BASE}/deCuongChiTiet/${id}`)
         fetchData()
       } catch (error) {
         console.error('Error deleting item:', error)
