@@ -10,6 +10,8 @@ const MoNhomPhanCong = () => {
   const [danhSachHocPhan, setDanhSachHocPhan] = useState([])
   const [availableHocPhan, setAvailableHocPhan] = useState([])
   const [selectedHocPhan, setSelectedHocPhan] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage] = useState(5)
   const [formData, setFormData] = useState({
     id_hoc_phan: '',
     khoa: '',
@@ -25,7 +27,7 @@ const MoNhomPhanCong = () => {
   const [formPhanCong, setFormPhanCong] = useState({
     id_giang_vien: '',
     nhom: '',
-    loaiNhom: '', // Thêm trường này
+    loaiNhom: '', 
     soTietThucHien: '',
     soTietThucTe: ''
   });
@@ -264,7 +266,7 @@ const MoNhomPhanCong = () => {
     setFormPhanCong({
       id_giang_vien: '',
       nhom: '',
-      loaiNhom: '', // Thêm trường này
+      loaiNhom: '',
       soTietThucHien: '',
       soTietThucTe: ''
     });
@@ -277,7 +279,7 @@ const MoNhomPhanCong = () => {
     setFormPhanCong({
       id_giang_vien: '',
       nhom: '',
-      loaiNhom: '', // Thêm trường này
+      loaiNhom: '',
       soTietThucHien: '',
       soTietThucTe: ''
     });
@@ -286,11 +288,10 @@ const MoNhomPhanCong = () => {
 
   const handleEditPhanCong = (phanCong) => {
     setShowDetailModal(false);
-    // Lấy số nhóm bằng cách chỉ lấy phần số
     const nhomNumber = phanCong.nhom.split('-')[0];
     setFormPhanCong({
       id_giang_vien: phanCong.giangVien.id,
-      nhom: nhomNumber, // Chỉ lưu phần số
+      nhom: nhomNumber,
       loaiNhom: phanCong.nhom.includes('-') ? phanCong.nhom.split('-')[1] : '',
       soTietThucHien: phanCong.soTietThucHien,
       soTietThucTe: phanCong.soTietThucTe
@@ -322,13 +323,13 @@ const MoNhomPhanCong = () => {
         return;
       }
 
-      const nhomValue = formPhanCong.loaiNhom 
+      const nhomValue = formPhanCong.loaiNhom
         ? `${formPhanCong.nhom} - ${formPhanCong.loaiNhom}`
         : formPhanCong.nhom;
 
       const payload = {
         ...formPhanCong,
-        nhom: nhomValue, // Gửi giá trị đã kết hợp
+        nhom: nhomValue, 
         keHoachMoNhom: { id: selectedKeHoach.id },
         giangVien: { id: formPhanCong.id_giang_vien }
       };
@@ -341,7 +342,7 @@ const MoNhomPhanCong = () => {
 
       await fetchPhanCong(selectedKeHoach.id);
       setShowPhanCongModal(false);
-      setShowDetailModal(true); // Hiện lại modal chi tiết
+      setShowDetailModal(true); 
       setCurrentPhanCong(null);
     } catch (error) {
       console.error('Error:', error);
@@ -379,19 +380,17 @@ const MoNhomPhanCong = () => {
         soTiet = selectedKeHoach.hocPhan.soThucHanh;
         break;
       default:
-        soTiet = selectedKeHoach.hocPhan.soLyThuyet + 
-                 selectedKeHoach.hocPhan.soThucHanh + 
-                 selectedKeHoach.hocPhan.soThucTap;
+        soTiet = selectedKeHoach.hocPhan.soLyThuyet +
+          selectedKeHoach.hocPhan.soThucHanh +
+          selectedKeHoach.hocPhan.soThucTap;
     }
 
-    // Tính số tiết dựa trên số nhóm (bỏ qua các ký tự khác)
     const nhomNumber = parseInt(nhom || 0);
     const soTietThucHien = nhomNumber * soTiet;
     const soTietThucTe = soTietThucHien * selectedKeHoach.hocPhan.heSo;
 
     setFormPhanCong({
       ...formPhanCong,
-      // Lưu chỉ số nhóm vào state
       nhom: nhom,
       soTietThucHien,
       soTietThucTe
@@ -418,9 +417,9 @@ const MoNhomPhanCong = () => {
         soTiet = selectedKeHoach.hocPhan.soThucHanh;
         break;
       default:
-        soTiet = selectedKeHoach.hocPhan.soLyThuyet + 
-                 selectedKeHoach.hocPhan.soThucHanh + 
-                 selectedKeHoach.hocPhan.soThucTap;
+        soTiet = selectedKeHoach.hocPhan.soLyThuyet +
+          selectedKeHoach.hocPhan.soThucHanh +
+          selectedKeHoach.hocPhan.soThucTap;
     }
 
     const soTietThucHien = nhom ? soTiet * parseInt(nhom) : 0;
@@ -434,15 +433,23 @@ const MoNhomPhanCong = () => {
     });
   };
 
-  const resetFormPhanCong = () => {
-    setFormPhanCong({
-      id_giang_vien: '',
-      nhom: '',
-      loaiNhom: '',
-      soTietThucHien: '',
-      soTietThucTe: ''
-    });
-  };
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem)
+  const totalPages = Math.ceil(data.length / itemsPerPage)
+
+  const paginationItems = []
+  for (let number = 1; number <= totalPages; number++) {
+    paginationItems.push(
+      <Pagination.Item
+        key={number}
+        active={number === currentPage}
+        onClick={() => setCurrentPage(number)}
+      >
+        {number}
+      </Pagination.Item>
+    )
+  }
 
   return (
     <div className="container-fluid mt-4">
@@ -503,6 +510,8 @@ const MoNhomPhanCong = () => {
           ))}
         </tbody>
       </Table>
+
+      <Pagination>{paginationItems}</Pagination>
 
       <Modal show={showActionModal} onHide={handleCloseModal} size="lg">
         <Modal.Header closeButton>
@@ -821,7 +830,7 @@ const MoNhomPhanCong = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="col-md-6">
                 <Form.Group className="mb-4">
                   <Form.Label>Số tiết thực hiện</Form.Label>
