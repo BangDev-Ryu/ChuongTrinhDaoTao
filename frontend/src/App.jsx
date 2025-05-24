@@ -1,42 +1,82 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import "./App.css";
-import Sidebar from "./components/layout/Sidebar";
-import ChucDanh from "./components/pages/ChucDanh";
-import DeCuongChiTiet from "./components/pages/DeCuongChiTiet";
-import GiangVien from "./components/pages/GiangVien";
-import HocPhan from "./components/pages/HocPhan";
-import KeHoachDayHoc from "./components/pages/KeHoachDayHoc";
-import MoNhomPhanCong from "./components/pages/MoNhomPhanCong";
-import ThongTinChung from "./components/pages/ThongTinChung";
-import User from "./components/pages/User";
-import VienChuc from "./components/pages/VienChuc";
-
-const queryClient = new QueryClient();
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import Sidebar from './components/layout/Sidebar';
+import ThongTinChung from './components/pages/ThongTinChung';
+import HocPhan from './components/pages/HocPhan';
+import DeCuongChiTiet from './components/pages/DeCuongChiTiet';
+import MoNhomPhanCong from './components/pages/MoNhomPhanCong';
+import GiangVien from './components/pages/GiangVien';
+import KeHoachDayHoc from './components/pages/KeHoachDayHoc';
+import DangNhap from './components/pages/DangNhap';
+import Layout from './components/layout/Layout';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <div className="app-container">
-          <Sidebar />
-          <main className="content">
-            <Routes>
-              <Route path="/" element={<ThongTinChung />} />
-              <Route path="/HocPhan" element={<HocPhan />} />
-              <Route path="/DeCuongChiTiet" element={<DeCuongChiTiet />} />
-              <Route path="/KeHoachDayHoc" element={<KeHoachDayHoc />} />
-              <Route path="/MoNhomPhanCong" element={<MoNhomPhanCong />} />
-              <Route path="/GiangVien" element={<GiangVien />} />
-              <Route path="/VienChuc" element={<VienChuc />} />
-              <Route path="/User" element={<User />} />
-              <Route path="/ChucDanh" element={<ChucDanh />} />
-            </Routes>
-          </main>
-        </div>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
+
+function AppContent() {
+  const location = useLocation();
+  const isLoginPage = location.pathname === '/DangNhap';
+
+  if (isLoginPage) {
+    return (
+      <Routes>
+        <Route path="/DangNhap" element={<DangNhap />} />
+      </Routes>
+    );
+  }
+
+  return (
+    <Routes>
+      <Route path="/" element={
+        <PrivateRoute>
+          <Layout>
+            <ThongTinChung />
+          </Layout>
+        </PrivateRoute>
+      } />
+      <Route path="/HocPhan" element={
+        <PrivateRoute>
+          <Layout>
+            <HocPhan />
+          </Layout>
+        </PrivateRoute>
+      } />
+      <Route path="/DeCuongChiTiet" element={
+        <PrivateRoute>
+          <Layout>
+            <DeCuongChiTiet />
+          </Layout>
+        </PrivateRoute>
+      } />
+      <Route path="/KeHoachDayHoc" element={
+        <PrivateRoute>
+          <Layout>
+            <KeHoachDayHoc />
+          </Layout>
+        </PrivateRoute>
+      } />
+      <Route path="/MoNhomPhanCong" element={
+        <PrivateRoute>
+          <Layout>
+            <MoNhomPhanCong />
+          </Layout>
+        </PrivateRoute>
+      } />
+      <Route path="/GiangVien" element={
+        <PrivateRoute>
+          <Layout>
+            <GiangVien />
+          </Layout>
+        </PrivateRoute>
+      } />
+    </Routes>
   );
 }
 

@@ -1,12 +1,21 @@
 import React from 'react'
 import '../../assets/css/Sidebar.css'
-import { Nav, Image } from 'react-bootstrap'
-import { NavLink } from 'react-router-dom'
+import { Nav } from 'react-bootstrap'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Xóa thông tin đăng nhập từ localStorage nếu có
+    localStorage.removeItem('user');
+    // Chuyển hướng về trang đăng nhập
+    navigate('/DangNhap');
+  }
+
   return (
     <Nav 
-      className="flex-column bg-light p-3" 
+      className="flex-column bg-light p-3 min-vh-100 position-relative" 
       style={{width: '250px'}}
     >
 
@@ -85,15 +94,16 @@ const Sidebar = () => {
                 Giảng viên
             </NavLink>
         </Nav.Item>
-        <Nav.Item> 
-            <NavLink 
-                to='/ChucDanh'
-                className={({isActive}) => 
-                  `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
-                }>
-                <i className="bi bi-award me-2"></i>
-                Chức danh
-            </NavLink>
+
+
+        <Nav.Item className="mt-auto"> 
+          <button 
+            onClick={handleLogout}
+            className="nav-link d-flex align-items-center p-3 text-danger border-0 bg-transparent w-100"
+          >
+            <i className="bi bi-box-arrow-right me-2"></i>
+            Đăng xuất
+          </button>
         </Nav.Item>
     </Nav>
   )

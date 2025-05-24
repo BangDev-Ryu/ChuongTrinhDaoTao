@@ -44,7 +44,7 @@ const HocPhan = () => {
   ]
 };
 
-const loaiHocPhanOptions = ["Bắt buộc", "Không bắt buộc"];
+const loaiHocPhanOptions = ["Bắt buộc", "Tự chọn"];
 
 
   useEffect(() => {
@@ -243,15 +243,17 @@ const fetchDanhSachDeCuongChiTiet = async () => {
     .replace(/\p{Diacritic}/gu, '')   // loại bỏ dấu
     .toLowerCase()                    // chuyển về chữ thường
 
-   const filteredData = data.filter(item => {
-    const term = normalizeText(searchTerm);
-    return (
-      normalizeText(item.thongTinChunng?.ten || "").includes(term) ||
-      normalizeText(item.ten).includes(term) ||
-      normalizeText(item.maHocPhan).includes(term) ||
-      normalizeText(item.maHocPhanTruoc.toString()).includes(term)
-    );
-  });
+  const filteredData = data.filter(item => {
+  const term = normalizeText(searchTerm);
+  return (
+    normalizeText(item.thongTinChunng?.ten || "").includes(term) ||
+    normalizeText(item.ten).includes(term) ||
+    normalizeText(item.maHocPhan).includes(term) ||
+    normalizeText(item.maHocPhanTruoc.toString()).includes(term) ||
+    normalizeText(item.loaiHocPhan).includes(term)
+  );
+});
+
 
 
       const daiCuong = useMemo(() => {
@@ -361,7 +363,7 @@ const fetchDanhSachDeCuongChiTiet = async () => {
               <td>{item.maHocPhan}</td>
               <td>{item.ten}</td>
               <td>{item.soTinChi}</td>
-              <td>{item.heSo}</td>
+              <td>{item.loaiHocPhan}</td>
               <td>{item.maHocPhanTruoc}</td>
               <td>
                 <Button
@@ -409,20 +411,20 @@ const fetchDanhSachDeCuongChiTiet = async () => {
               <div className="col-md-6">
 
                 <Form.Group className="mb-3">
-                            <Form.Label>ID Thông tin chung</Form.Label>
-                            <Form.Select
-                              value={formData.id_thong_tin_chung}
-                              onChange={(e) => setFormData({ ...formData, id_thong_tin_chung: e.target.value })}
-                              required
-                            >
-                              <option value="">-- Chọn tên thông tin chung --</option>
-                              {danhSachThongTinChung.map((ttc) => (
-                                <option key={ttc.id} value={ttc.id}>
-                                  {ttc.id} - {ttc.ten}
-                                </option>
-                              ))}
-                            </Form.Select>
-                          </Form.Group>
+                  <Form.Label>ID Thông tin chung</Form.Label>
+                  <Form.Select
+                    value={formData.id_thong_tin_chung}
+                    onChange={(e) => setFormData({ ...formData, id_thong_tin_chung: e.target.value })}
+                    required
+                  >
+                    <option value="">-- Chọn tên thông tin chung --</option>
+                    {danhSachThongTinChung.map((ttc) => (
+                      <option key={ttc.id} value={ttc.id}>
+                        {ttc.id} - {ttc.ten}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
 
 
                 {[
@@ -444,40 +446,40 @@ const fetchDanhSachDeCuongChiTiet = async () => {
                 ))}
 
                  <Form.Group className="mb-3">
-          <Form.Label>Khối kiến thức</Form.Label>
+          <Form.Label>Loại khối kiến thức</Form.Label>
+
           <Form.Select
-            value={formData.khoiKienThuc}
+            value={formData.loaiKhoiKienThuc}
             onChange={(e) => {
-              const newKhoi = e.target.value;
+              const newLoai = e.target.value;
               setFormData({
                 ...formData,
-                khoiKienThuc: newKhoi,
-                loaiKhoiKienThuc: '' // reset loại khối khi khối thay đổi
+                loaiKhoiKienThuc: newKhoi,
+                khoiKienThuc: '' // reset loại khối khi khối thay đổi
               });
             }}
             required
           >
-            <option value="">-- Chọn khối kiến thức --</option>
+            <option value="">-- Chọn loại khối kiến thức --</option>
+
             {Object.keys(khoiKienThucOptions).map((key) => (
               <option key={key} value={key}>{key}</option>
             ))}
           </Form.Select>
         </Form.Group>
-
-
               </div>
 
               <div className="col-md-6">
                 <Form.Group className="mb-3">
-          <Form.Label>Loại khối kiến thức</Form.Label>
+          <Form.Label>Khối kiến thức</Form.Label>
           <Form.Select
-            value={formData.loaiKhoiKienThuc}
-            onChange={(e) => setFormData({ ...formData, loaiKhoiKienThuc: e.target.value })}
+            value={formData.khoiKienThuc}
+            onChange={(e) => setFormData({ ...formData, khoiKienThuc: e.target.value })}
             required
-            disabled={!formData.khoiKienThuc}
+            disabled={!formData.loaiKhoiKienThuc}
           >
-            <option value="">-- Chọn loại khối kiến thức --</option>
-            {(khoiKienThucOptions[formData.khoiKienThuc] || []).map((loai) => (
+            <option value="">-- Chọn khối kiến thức --</option>
+            {(khoiKienThucOptions[formData.loaiKhoiKienThuc] || []).map((loai) => (
               <option key={loai} value={loai}>{loai}</option>
             ))}
           </Form.Select>
@@ -498,7 +500,6 @@ const fetchDanhSachDeCuongChiTiet = async () => {
         </Form.Group>
 
                 {[
-                  ['Mã học phần trước', 'maHocPhanTruoc'],
                   ['Số lý thuyết', 'soLyThuyet', 'number'],
                   ['Số thực hành', 'soThucHanh', 'number'],
                   ['Số thực tập', 'soThucTap', 'number'],
@@ -512,7 +513,16 @@ const fetchDanhSachDeCuongChiTiet = async () => {
                       required
                     />
                   </Form.Group>
+                  
                 ))}
+                <Form.Group className="mb-3">
+                    <Form.Label>{"Mã học phần trước"}</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={formData.maHocPhanTruoc}
+                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+                    />
+                  </Form.Group>
               </div>
             </div>
             <div className="d-flex justify-content-end gap-2">
