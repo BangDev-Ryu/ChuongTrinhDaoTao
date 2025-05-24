@@ -1,0 +1,101 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/javascript-node
+{
+  "name": "Node.js",
+  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "installGradle": true,
+      "installMaven": true,
+      "installAnt": true,
+      "installGroovy": true,
+      "version": "latest",
+      "jdkDistro": "tem",
+      "gradleVersion": "latest",
+      "mavenVersion": "latest",
+      "antVersion": "latest",
+      "groovyVersion": "latest"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "nodeGypDependencies": true,
+      "installYarnUsingApt": true,
+      "version": "latest",
+      "pnpmVersion": "latest",
+      "nvmVersion": "latest"
+    },
+    "ghcr.io/ebaskoro/devcontainer-features/sdkman:1": {
+      "candidate": "kotlin",
+      "version": "latest"
+    },
+    "ghcr.io/frntn/devcontainers-features/postman:1": {},
+    "ghcr.io/r3dpoint/devcontainer-features/tailwindcss-standalone-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-community/npm-features/typescript:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/corepack:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/maven-sdkman:2": {
+      "version": "latest",
+      "jdkVersion": "latest",
+      "jdkDistro": "tem"
+    },
+    "ghcr.io/devcontainers-extra/features/mvnd-sdkman:2": {
+      "version": "latest",
+      "jdkVersion": "latest",
+      "jdkDistro": "tem"
+    },
+    "ghcr.io/devcontainers-extra/features/mysql-homebrew:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/pomchecker-sdkman:2": {
+      "version": "latest",
+      "jdkVersion": "latest",
+      "jdkDistro": "tem"
+    },
+    "ghcr.io/devcontainers-extra/features/prisma:2": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/springboot-sdkman:2": {
+      "version": "latest",
+      "jdkVersion": "latest",
+      "jdkDistro": "tem"
+    },
+    "ghcr.io/devcontainers-extra/features/ts-node:1": {
+      "version": "latest"
+    }
+  },
+
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  // "features": {},
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "cd ${containerWorkspaceFolder} && cd backend && mvn dependency:go-offline && cd ../frontend && COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack enable && yarn set version berry && yarn install",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "RudraPatel.prettier-plugin-java-vscode",
+        "dbaeumer.vscode-eslint",
+        "vscjava.vscode-java-pack",
+        "vscjava.vscode-spring-initializr",
+        "dsznajder.es7-react-js-snippets",
+        "bradlc.vscode-tailwindcss",
+        "antfu.vite",
+        "vitest.explorer"
+      ]
+    }
+  }
+
+  // Configure tool-specific properties.
+  // "customizations": {},
+
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  // "remoteUser": "root"
+}

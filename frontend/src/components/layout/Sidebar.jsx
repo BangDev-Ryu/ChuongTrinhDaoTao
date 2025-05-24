@@ -85,7 +85,7 @@ const Sidebar = () => {
             </NavLink>
         </Nav.Item>
 
-        {/* Logout button at bottom */}
+
         <Nav.Item className="mt-auto"> 
           <button 
             onClick={handleLogout}
