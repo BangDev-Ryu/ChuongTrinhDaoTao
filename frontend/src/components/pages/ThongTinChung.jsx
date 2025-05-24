@@ -246,7 +246,6 @@ const ThongTinChung = () => {
             <th>Loại bằng</th>
             <th>Loại hình đào tạo</th>
             <th>Thời gian</th>
-            <th>Tín chỉ tích lũy</th>
             <th>Hành động</th>
           </tr>
         </thead>
@@ -258,7 +257,6 @@ const ThongTinChung = () => {
               <td>{item.loaiBang}</td>
               <td>{item.loaiHinhDaoTao}</td>
               <td>{item.thoiGian}</td>
-              <td>{item.tinChiTichLuy}</td>
               <td>
                 <Button
                   variant="success"
@@ -355,15 +353,6 @@ const ThongTinChung = () => {
               </div>
 
               <div className="col-md-6">
-                <Form.Group className="mb-3">
-                  <Form.Label>Tín chỉ tích lũy</Form.Label>
-                  <Form.Control
-                    type="number"
-                    value={formData.tinChiTichLuy}
-                    onChange={(e) => setFormData({...formData, tinChiTichLuy: parseInt(e.target.value)})}
-                    required
-                  />
-                </Form.Group>
 
                 <Form.Group className="mb-3">
                   <Form.Label>Khoa quản lý</Form.Label>
@@ -391,7 +380,6 @@ const ThongTinChung = () => {
                     type="text"
                     value={formData.website}
                     onChange={(e) => setFormData({...formData, website: e.target.value})}
-                    required
                   />
                 </Form.Group>
 
@@ -501,17 +489,35 @@ const ThongTinChung = () => {
               <tr>
                 <td colSpan="2" className="text-end fw-bold">Tổng</td>
                 <td className='fw-bold'>
-                  X
+                  {tinChiTotals.ngoaiNgu.batBuoc + tinChiTotals.llct.batBuoc + tinChiTotals.khac.batBuoc + tinChiTotals.coSo.batBuoc + tinChiTotals.nganh.batBuoc + tinChiTotals.chuyenNganh.batBuoc}
                 </td>
                 <td className='fw-bold'>
-                  X
+                  {tinChiTotals.ngoaiNgu.tuChon + tinChiTotals.llct.tuChon + tinChiTotals.khac.tuChon + tinChiTotals.coSo.tuChon + tinChiTotals.nganh.tuChon + tinChiTotals.chuyenNganh.tuChon}
                 </td>
               </tr>
             </tbody>
             <tfoot>
               <tr>
                 <td colSpan="4">
-                  Số tín chỉ tối thiểu phải tích lũy (không tính số tín chỉ Giáo dục thể chất và Giáo dục quốc phòng và an ninh): 155
+                  Số tín chỉ tối thiểu phải tích lũy (không tính số tín chỉ Giáo dục thể chất và Giáo dục quốc phòng và an ninh):
+                  <span className='fw-bold'>
+                    {
+                      tinChiTotals.ngoaiNgu.batBuoc + 
+                      tinChiTotals.llct.batBuoc + 
+                      tinChiTotals.khac.batBuoc + 
+                      tinChiTotals.coSo.batBuoc + 
+                      tinChiTotals.nganh.batBuoc + 
+                      tinChiTotals.chuyenNganh.batBuoc + 
+                      tinChiTotals.ngoaiNgu.tuChon + 
+                      tinChiTotals.llct.tuChon + 
+                      tinChiTotals.khac.tuChon + 
+                      tinChiTotals.coSo.tuChon + 
+                      tinChiTotals.nganh.tuChon + 
+                      tinChiTotals.chuyenNganh.tuChon
+                      }
+
+                  </span>
+                  
                 </td>
               </tr>
             </tfoot>
