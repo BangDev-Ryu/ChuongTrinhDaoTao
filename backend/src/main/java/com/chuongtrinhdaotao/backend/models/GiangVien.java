@@ -24,6 +24,4 @@ public class GiangVien {
     private String chucDanh;
     private int namSinh;
 
-    @OneToOne(mappedBy = "giangVien", cascade = CascadeType.ALL, orphanRemoval = true)
-    private User user;
 }
