@@ -10,14 +10,14 @@ import org.springframework.stereotype.Repository;
 public interface HocPhanRepository extends JpaRepository<HocPhan, Integer> {
     @Query("SELECT SUM(hp.soTinChi) " +
             "FROM HocPhan hp " +
-            "WHERE hp.thongTinChung.id = :idThongTinChung AND hp.loaiHocPhan = :loaiHocPhan AND hp.khoiKienThuc = :khoiKienThuc")
+            "WHERE hp.thongTinChung.id = :idThongTinChung AND hp.loaiHocPhan LIKE :loaiHocPhan% AND hp.khoiKienThuc LIKE :khoiKienThuc%")
     Integer sumTinChiByKhoiKienThuc(@Param("idThongTinChung") Integer idThongTinChung,
                                     @Param("loaiHocPhan") String loaiHocPhan,
                                     @Param("khoiKienThuc") String khoiKienThuc);
 
     @Query("SELECT SUM(hp.soTinChi) " +
             "FROM HocPhan hp " +
-            "WHERE hp.thongTinChung.id = :idThongTinChung AND hp.loaiHocPhan = :loaiHocPhan AND hp.loaiKhoiKienThuc = :loaiKhoiKienThuc")
+            "WHERE hp.thongTinChung.id = :idThongTinChung AND hp.loaiHocPhan LIKE :loaiHocPhan% AND hp.loaiKhoiKienThuc LIKE :loaiKhoiKienThuc%")
     Integer sumTinChiByLoaiKhoiKienThuc(@Param("idThongTinChung") Integer idThongTinChung,
                                     @Param("loaiHocPhan") String loaiHocPhan,
                                     @Param("loaiKhoiKienThuc") String loaiKhoiKienThuc);

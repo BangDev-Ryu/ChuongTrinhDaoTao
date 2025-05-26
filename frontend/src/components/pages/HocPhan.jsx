@@ -1,6 +1,6 @@
-import axios from 'axios';
-import { useEffect, useMemo, useState } from 'react';
-import { Button, Form, Modal, Pagination, Table } from 'react-bootstrap';
+import React, { useState, useEffect, useMemo } from 'react'
+import { Table, Button, Modal, Form, Pagination } from 'react-bootstrap'
+import axios from 'axios'
 
 const HocPhan = () => {
   const [data, setData] = useState([])
@@ -28,7 +28,13 @@ const HocPhan = () => {
     soThucTap: '',
     soTinChi: '',
     ten: '',
+    chuyenNganh: '',
   })
+
+  const thongTinChungOptions = danhSachThongTinChung.map((ttc) => ({
+      label: `${ttc.id} - ${ttc.ten}`,
+      value: ttc.id,
+    }));
   
   const khoiKienThucOptions = {
   "Khối kiến thức giáo dục đại cương": [
@@ -55,7 +61,7 @@ const loaiHocPhanOptions = ["Bắt buộc", "Tự chọn"];
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/hocPhan`)
+      const response = await axios.get('http://localhost:8080/hocPhan')
       setData(response.data)
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -64,7 +70,7 @@ const loaiHocPhanOptions = ["Bắt buộc", "Tự chọn"];
 
   const fetchDanhSachThongTinChung = async () => {
   try {
-    const response = await axios.get(`${API_BASE}/thongTinChung`)
+    const response = await axios.get('http://localhost:8080/thongTinChung')
     setDanhSachThongTinChung(response.data)
   } catch (error) {
     console.error('Lỗi khi lấy danh sách thông tin chung:', error)
@@ -73,7 +79,7 @@ const loaiHocPhanOptions = ["Bắt buộc", "Tự chọn"];
 
 const fetchDanhSachDeCuongChiTiet = async () => {
   try {
-    const response = await axios.get(`${API_BASE}/deCuongChiTiet`)
+    const response = await axios.get('http://localhost:8080/deCuongChiTiet')
     setDanhSachDeCuongChiTiet(response.data)
   } catch (error) {
     console.error('Lỗi khi lấy danh sách đề cương chi tiết:', error)
@@ -82,43 +88,49 @@ const fetchDanhSachDeCuongChiTiet = async () => {
 
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const payload = {
-      id_thong_tin_chung: formData.id_thong_tin_chung,
-      heSo: formData.heSo,
-      hocKyThucHien: formData.hocKyThucHien,
-      khoiKienThuc: formData.khoiKienThuc,
-      loaiHocPhan: formData.loaiHocPhan,
-      loaiKhoiKienThuc: formData.loaiKhoiKienThuc,
-      maHocPhan: formData.maHocPhan,
-      maHocPhanTruoc: formData.maHocPhanTruoc,
-      soLyThuyet: formData.soLyThuyet,
-      soThucHanh: formData.soThucHanh,
-      soThucTap: formData.soThucTap,
-      soTinChi: formData.soTinChi,
-      ten: formData.ten,
-    };
+    e.preventDefault();
+    try {
+      let khoiKienThucValue = formData.khoiKienThuc;
+      if (formData.khoiKienThuc === "Kiến thức chuyên ngành") {
+        khoiKienThucValue = formData.khoiKienThuc + " " + (formData.chuyenNganh || "");
+      }
 
-    if (currentItem) {
-      await axios.put(`http://192.168.1.18:8080/hocPhan/${currentItem.id}`, payload);
-    } else {
-      await axios.post(`${API_BASE}/hocPhan`, payload);
+      const payload = {
+        thongTinChung: { id: formData.id_thong_tin_chung },
+        heSo: formData.heSo,
+        hocKyThucHien: formData.hocKyThucHien,
+        khoiKienThuc: khoiKienThucValue, // <-- đây là chỗ bạn cần sửa
+        loaiHocPhan: formData.loaiHocPhan,
+        loaiKhoiKienThuc: formData.loaiKhoiKienThuc,
+        maHocPhan: formData.maHocPhan,
+        maHocPhanTruoc: formData.maHocPhanTruoc,
+        soLyThuyet: formData.soLyThuyet,
+        soThucHanh: formData.soThucHanh,
+        soThucTap: formData.soThucTap,
+        soTinChi: formData.soTinChi,
+        ten: formData.ten,
+        chuyenNganh: formData.chuyenNganh,
+      };
+
+      if (currentItem) {
+        await axios.put(`http://localhost:8080/hocPhan/${currentItem.id}`, payload);
+      } else {
+        await axios.post('http://localhost:8080/hocPhan', payload);
+      }
+
+      fetchData();
+      handleCloseModal();
+    } catch (error) {
+      console.error('Error:', error.response?.data);
+      alert('Có lỗi xảy ra: ' + (error.response?.data?.message || error.message));
     }
-
-    fetchData();
-    handleCloseModal();
-  } catch (error) {
-    console.error('Error:', error.response?.data);
-    alert('Có lỗi xảy ra: ' + (error.response?.data?.message || error.message));
-  }
-};
+  };
 
 
   const handleDelete = async (id) => {
     if (window.confirm('Xác nhận xóa?')) {
       try {
-        await axios.delete(`http://192.168.1.18:8080/hocPhan/${id}`)
+        await axios.delete(`http://localhost:8080/hocPhan/${id}`)
         fetchData()
       } catch (error) {
         console.error('Error deleting item:', error)
@@ -143,6 +155,7 @@ const fetchDanhSachDeCuongChiTiet = async () => {
       soThucTap: '',
       soTinChi: '',
       ten: '',
+      chuyenNganh: '',
     })
   }
 
@@ -246,7 +259,7 @@ const fetchDanhSachDeCuongChiTiet = async () => {
   const filteredData = data.filter(item => {
   const term = normalizeText(searchTerm);
   return (
-    normalizeText(item.thongTinChunng?.ten || "").includes(term) ||
+    normalizeText(item.thongTinChung?.ten || "").includes(term) ||
     normalizeText(item.ten).includes(term) ||
     normalizeText(item.maHocPhan).includes(term) ||
     normalizeText(item.maHocPhanTruoc.toString()).includes(term) ||
@@ -411,20 +424,20 @@ const fetchDanhSachDeCuongChiTiet = async () => {
               <div className="col-md-6">
 
                 <Form.Group className="mb-3">
-                  <Form.Label>ID Thông tin chung</Form.Label>
-                  <Form.Select
-                    value={formData.id_thong_tin_chung}
-                    onChange={(e) => setFormData({ ...formData, id_thong_tin_chung: e.target.value })}
-                    required
-                  >
-                    <option value="">-- Chọn tên thông tin chung --</option>
-                    {danhSachThongTinChung.map((ttc) => (
-                      <option key={ttc.id} value={ttc.id}>
-                        {ttc.id} - {ttc.ten}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
+                            <Form.Label>ID Thông tin chung</Form.Label>
+                            <Form.Select
+                              value={formData.id_thong_tin_chung}
+                              onChange={(e) => setFormData({ ...formData, id_thong_tin_chung: e.target.value })}
+                              required
+                            >
+                              <option value="">-- Chọn tên thông tin chung --</option>
+                              {danhSachThongTinChung.map((ttc) => (
+                                <option key={ttc.id} value={ttc.id}>
+                                  {ttc.id} - {ttc.ten}
+                                </option>
+                              ))}
+                            </Form.Select>
+                          </Form.Group>
 
 
                 {[
@@ -446,22 +459,21 @@ const fetchDanhSachDeCuongChiTiet = async () => {
                 ))}
 
                  <Form.Group className="mb-3">
-          <Form.Label>Loại khối kiến thức</Form.Label>
 
+                  <Form.Label>Loại khối kiến thức</Form.Label>
           <Form.Select
             value={formData.loaiKhoiKienThuc}
             onChange={(e) => {
               const newLoai = e.target.value;
               setFormData({
                 ...formData,
-                loaiKhoiKienThuc: newKhoi,
-                khoiKienThuc: '' // reset loại khối khi khối thay đổi
+                loaiKhoiKienThuc: newLoai,
+                khoiKienThuc: '', // reset khối khi loại thay đổi
               });
             }}
             required
           >
-            <option value="">-- Chọn loại khối kiến thức --</option>
-
+            <option value="">-- Chọn loại kiến thức --</option>
             {Object.keys(khoiKienThucOptions).map((key) => (
               <option key={key} value={key}>{key}</option>
             ))}
@@ -469,20 +481,20 @@ const fetchDanhSachDeCuongChiTiet = async () => {
         </Form.Group>
               </div>
 
-              <div className="col-md-6">
-                <Form.Group className="mb-3">
-          <Form.Label>Khối kiến thức</Form.Label>
-          <Form.Select
-            value={formData.khoiKienThuc}
-            onChange={(e) => setFormData({ ...formData, khoiKienThuc: e.target.value })}
-            required
-            disabled={!formData.loaiKhoiKienThuc}
-          >
-            <option value="">-- Chọn khối kiến thức --</option>
-            {(khoiKienThucOptions[formData.loaiKhoiKienThuc] || []).map((loai) => (
-              <option key={loai} value={loai}>{loai}</option>
-            ))}
-          </Form.Select>
+      <div className="col-md-6">
+        <Form.Group className="mb-3">
+                <Form.Label>Khối kiến thức</Form.Label>
+      <Form.Select
+        value={formData.khoiKienThuc}
+        onChange={(e) => setFormData({ ...formData, khoiKienThuc: e.target.value })}
+        required
+        disabled={!formData.loaiKhoiKienThuc}
+      >
+        <option value="">-- Chọn khối kiến thức --</option>
+        {(khoiKienThucOptions[formData.loaiKhoiKienThuc] || []).map((loai) => (
+          <option key={loai} value={loai}>{loai}</option>
+        ))}
+      </Form.Select>
         </Form.Group>
 
         <Form.Group className="mb-3">
@@ -500,6 +512,7 @@ const fetchDanhSachDeCuongChiTiet = async () => {
         </Form.Group>
 
                 {[
+                  ['Mã học phần trước', 'maHocPhanTruoc'],
                   ['Số lý thuyết', 'soLyThuyet', 'number'],
                   ['Số thực hành', 'soThucHanh', 'number'],
                   ['Số thực tập', 'soThucTap', 'number'],
@@ -513,16 +526,20 @@ const fetchDanhSachDeCuongChiTiet = async () => {
                       required
                     />
                   </Form.Group>
-                  
                 ))}
-                <Form.Group className="mb-3">
-                    <Form.Label>{"Mã học phần trước"}</Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={formData.maHocPhanTruoc}
-                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
-                    />
-                  </Form.Group>
+            {formData.khoiKienThuc === "Kiến thức chuyên ngành" && (
+              <Form.Group className="mb-3">
+                <Form.Label>Chuyên ngành</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={formData.chuyenNganh}
+                  onChange={(e) => setFormData({ ...formData, chuyenNganh: e.target.value })}
+                  placeholder="Nhập chuyên ngành"
+                  required
+                />
+              </Form.Group>
+            )}
+
               </div>
             </div>
             <div className="d-flex justify-content-end gap-2">
