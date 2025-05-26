@@ -76,16 +76,6 @@ const Sidebar = () => {
 
         <Nav.Item> 
             <NavLink 
-                to='/User'
-                className={({isActive}) => 
-                  `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
-                }>
-                <i className="bi bi-person me-2"></i>
-                User
-            </NavLink>
-        </Nav.Item>
-        <Nav.Item> 
-            <NavLink 
                 to='/GiangVien'
                 className={({isActive}) => 
                   `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
@@ -95,6 +85,18 @@ const Sidebar = () => {
             </NavLink>
         </Nav.Item>
 
+
+        <Nav.Item> 
+            <NavLink 
+                to='/User'
+                className={({isActive}) => 
+                  `nav-link d-flex align-items-center p-3 ${isActive ? 'active' : ''}`
+                }>
+                <i className="bi bi-person me-2"></i>
+                User
+            </NavLink>
+        </Nav.Item>
+        
 
         <Nav.Item className="mt-auto"> 
           <button 
